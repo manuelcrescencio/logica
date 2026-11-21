@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coincidencia y sustitución</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231f3b63%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27serif%27%3E%E2%8A%A2%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="fuentes/fuentes.css">
+<style>
+:root{
+  /* Presentación en vertical: una lámina por pantalla de lectura, numeradas, con barra de paso fija abajo; fórmulas en serif matemática, controles en sans. */
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#18212f; --muted:#5a6678; --line:#d5dbe5;
+  --accent:#1f3b63; --accent-soft:#e4ebf5;
+  --ok:#1b6045; --ok-soft:#e1f1e9; --bad:#a23a1c; --bad-soft:#f8e6df;
+  --font-body:"STIX Two Text","Cambria","Times New Roman",serif;
+  --font-ui:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111722; --surface:#1a2231; --ink:#e6ebf3; --muted:#9aa7ba; --line:#313c50;
+    --accent:#9dbcf0; --accent-soft:#25324a;
+    --ok:#7fd3a8; --ok-soft:#183628; --bad:#f0a085; --bad-soft:#3d2219;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111722; --surface:#1a2231; --ink:#e6ebf3; --muted:#9aa7ba; --line:#313c50;
+  --accent:#9dbcf0; --accent-soft:#25324a;
+  --ok:#7fd3a8; --ok-soft:#183628; --bad:#f0a085; --bad-soft:#3d2219;
+}
+*{box-sizing:border-box}
+html{font-size:18px;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.5}
+main{max-width:52rem;margin:0 auto;padding:1.25rem 1rem 6rem;display:flex;flex-direction:column;gap:1.5rem}
+.slide{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:.4rem;padding:1.5rem 1.6rem 1.7rem;display:flex;flex-direction:column;gap:1rem;scroll-margin-top:1rem}
+@media (max-width:520px){.slide{padding:1.1rem 1rem}}
+.num{font-family:var(--font-ui);font-size:.78rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+h1,h2,h3{font-family:var(--font-ui);margin:0;line-height:1.2;text-wrap:balance}
+h1{font-size:2.1rem;font-weight:600;color:var(--accent)}
+h2{font-size:1.5rem;font-weight:600;color:var(--accent)}
+h3{font-size:.9rem;font-weight:600;color:var(--muted)}
+p,ul,ol{margin:0}
+ul,ol{padding-left:1.2rem;display:flex;flex-direction:column;gap:.4rem}
+.lead{font-size:1.1rem;max-width:40rem}
+.m{white-space:nowrap}
+.ss{display:inline-flex;flex-direction:column;font-size:.66em;line-height:1;vertical-align:middle;margin:0 .1em 0 .05em}
+.thm{background:var(--accent-soft);border-left:4px solid var(--accent);padding:.8rem 1rem;display:flex;flex-direction:column;gap:.45rem;font-size:1.08rem;overflow-x:auto}
+.thm .name{font-family:var(--font-ui);font-size:.8rem;font-weight:600;color:var(--accent)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media (max-width:640px){.two{grid-template-columns:1fr}}
+.box{border:1px solid var(--line);border-radius:.35rem;padding:.8rem .9rem;display:flex;flex-direction:column;gap:.55rem;min-width:0}
+.free{border-bottom:2px solid var(--ok)} .bound{border-bottom:2px dotted var(--bad)}
+.big{font-size:1.3rem}
+.ctl{display:flex;flex-wrap:wrap;gap:.45rem .9rem;align-items:center;font-family:var(--font-ui);font-size:.86rem}
+.ctl label{display:flex;gap:.35rem;align-items:center}
+select,button{font-family:var(--font-ui);font-size:.86rem;color:var(--ink)}
+select{background:var(--surface);border:1px solid var(--line);border-radius:.3rem;padding:.3rem .35rem;max-width:100%}
+select.f{font-family:var(--font-body);font-size:1rem}
+button{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:.35rem;padding:.45rem .8rem;text-align:left}
+button:hover{border-color:var(--accent)}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pill{font-family:var(--font-ui);font-size:.74rem;font-weight:600;padding:.1rem .5rem;border-radius:1rem;white-space:nowrap;background:var(--accent-soft);color:var(--accent)}
+.pill.t{background:var(--ok-soft);color:var(--ok)} .pill.f{background:var(--bad-soft);color:var(--bad)}
+.line{display:flex;justify-content:space-between;gap:.75rem;align-items:center;flex-wrap:wrap;padding:.4rem .6rem;border:1px solid var(--line);border-radius:.3rem}
+.verdict{padding:.6rem .8rem;border-radius:.35rem;font-size:.98rem}
+.verdict.ok{background:var(--ok-soft);border-left:3px solid var(--ok)}
+.verdict.no{background:var(--bad-soft);border-left:3px solid var(--bad)}
+.log{font-size:.95rem;color:var(--muted)}
+.sys{font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}
+table.cases{border-collapse:collapse;width:100%;font-size:.98rem}
+table.cases td{border-top:1px solid var(--line);padding:.45rem .4rem;vertical-align:top}
+table.cases td:first-child{white-space:nowrap;font-family:var(--font-ui);font-size:.8rem;color:var(--muted)}
+.scroll{overflow-x:auto}
+.opts{display:flex;flex-direction:column;gap:.35rem}
+.opts button.right{border-color:var(--ok);background:var(--ok-soft)}
+.opts button.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.back{font-family:var(--font-ui);font-size:.85rem;color:var(--accent);text-decoration:none}
+.back:hover{text-decoration:underline}
+footer.credit{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);text-align:center}
+footer.credit a{color:var(--accent)}
+.pager{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);z-index:10}
+.pager div{max-width:52rem;margin:0 auto;padding:.5rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;font-family:var(--font-ui);font-size:.85rem}
+.pager button{font-weight:500}
+.pager .hint{color:var(--muted)}
+@media (max-width:520px){.pager .hint{display:none}}
+</style>
+</head>
+<body>
+<main id="deck">
+
+<section class="slide">
+  <a class="back" href="./">← Todas las prácticas</a>
+  <span class="num">Teoría de modelos · II.4 Teoremas semánticos</span>
+  <h1>Coincidencia y sustitución</h1>
+  <p class="lead">Dos teoremas sobre cómo depende la verdad de una fórmula de la asignación de valores a las variables. Casi todo lo que viene después en el libro se apoya en ellos.</p>
+  <div class="two">
+    <div class="box"><h3>Coincidencia (II.4.1)</h3><p>Sólo cuentan los valores de las variables libres.</p></div>
+    <div class="box"><h3>Sustitución (II.4.2)</h3><p>Sustituir una variable por un término en la fórmula equivale a cambiar el valor de la variable en la asignación.</p></div>
+  </div>
+  <p class="sys">Avanza con las flechas del teclado o con los botones de abajo. Las láminas 4, 7, 9 y 11 son interactivas.</p>
+</section>
+
+<section class="slide">
+  <h2>Lo que hace falta recordar</h2>
+  <ul>
+    <li>Una <strong>asignación</strong> <span class="m">ℐ: V → A</span> da a cada variable un individuo del universo. Con ella, <span class="m">𝒜ℐ</span> hace que cada término denote y que cada fórmula sea verdadera o falsa.</li>
+    <li>La <strong>asignación variante</strong> <span class="m" id="variant"></span> coincide con ℐ en todo salvo en x, a la que da el valor <b>a</b>. Así se interpretan los cuantificadores.</li>
+    <li><span class="m">LBR(φ)</span> es el conjunto de las variables con alguna estancia libre en φ.</li>
+  </ul>
+  <div class="box">
+    <h3>Estancias libres y ligadas (II.1.6)</h3>
+    <p class="big m scroll">∀x (R<span class="free">y</span><span class="free">z</span> → ∃z (R<span class="bound">x</span><span class="bound">z</span> ∧ ¬R<span class="bound">x</span><span class="free">y</span>))</p>
+    <p class="sys"><span class="free">Subrayado continuo</span>: estancia libre. <span class="bound">Punteado</span>: ligada. Aquí <span class="m">LBR(φ) = {y, z}</span>, aunque z también aparece ligada.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Teorema de coincidencia</h2>
+  <div class="thm">
+    <span class="name">II.4.1</span>
+    <p>Sea 𝒜 un sistema y <span class="m">ℐ₁, ℐ₂: V → A</span> dos asignaciones.</p>
+    <p>a) Si <span class="m">ℐ₁ ↾ LBR(τ) = ℐ₂ ↾ LBR(τ)</span>, entonces <span class="m">𝒜ℐ₁(τ) = 𝒜ℐ₂(τ)</span>.</p>
+    <p>b) Si <span class="m">ℐ₁ ↾ LBR(φ) = ℐ₂ ↾ LBR(φ)</span>, entonces <span class="m">𝒜ℐ₁ sat φ</span> syss <span class="m">𝒜ℐ₂ sat φ</span>.</p>
+  </div>
+  <p>En palabras: lo que una asignación diga de las variables que no están libres es indiferente. Las variables libres funcionan como parámetros; las ligadas recorren todo el universo por su cuenta.</p>
+  <p>Es una condición suficiente, no necesaria: dos asignaciones que difieren en una variable libre pueden dar el mismo valor de verdad, o no.</p>
+</section>
+
+<section class="slide">
+  <h2>Compruébalo: dos asignaciones, una fórmula</h2>
+  <p class="sys">Sistema: 𝒜 = ⟨{0, 1, 2, 3}, ≤⟩, con R interpretado como ≤.</p>
+  <div class="ctl"><label for="c-f">Fórmula</label><select id="c-f" class="f"></select><span id="c-lbr" class="pill"></span></div>
+  <div class="two">
+    <div class="box"><h3>Asignación ℐ₁</h3><div class="ctl" id="c-a1"></div><div class="line"><span class="m">𝒜ℐ₁ sat φ</span><span id="c-v1" class="pill"></span></div></div>
+    <div class="box"><h3>Asignación ℐ₂</h3><div class="ctl" id="c-a2"></div><div class="line"><span class="m">𝒜ℐ₂ sat φ</span><span id="c-v2" class="pill"></span></div></div>
+  </div>
+  <div id="c-verdict" class="verdict" aria-live="polite"></div>
+  <p class="log">Prueba a cambiar sólo variables que no estén libres: el valor no se mueve. Con la sentencia <span class="m">∀x ∃y Rxy</span> no se mueve nunca.</p>
+</section>
+
+<section class="slide">
+  <h2>Por qué es cierto y qué se obtiene</h2>
+  <div class="two">
+    <div class="box">
+      <h3>Idea de la demostración</h3>
+      <p>Inducción semiótica sobre términos y fórmulas. El único caso con contenido es el cuantificador:</p>
+      <p><span class="m">𝒜ℐ₁ sat ∀x φ</span> syss para cada <b>a</b>, <span class="m" id="pf1"></span>.</p>
+      <p>Las variantes <span class="m" id="pf2"></span> coinciden en <span class="m">LBR(φ)</span>, porque <span class="m">LBR(φ) ⊆ LBR(∀xφ) ∪ {x}</span> y en x ambas valen <b>a</b>. Se aplica el supuesto inductivo.</p>
+    </div>
+    <div class="box">
+      <h3>Consecuencias</h3>
+      <ul>
+        <li>Una <strong>sentencia</strong> es verdadera o falsa en 𝒜 sin mencionar asignación: «𝒜 es modelo de φ».</li>
+        <li>La notación <span class="m">𝒜[<b>x</b>₁ … <b>x</b>ₙ] sat φ</span> está justificada: basta fijar los valores de las libres.</li>
+        <li>Si <span class="m">x ∉ LBR(φ)</span>, entonces <span class="m" id="pf3"></span> syss <span class="m">𝒜ℐ sat φ</span> (ejercicio 1 de II.4.3).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>La operación de sustitución</h2>
+  <p><span class="m" id="s0"></span> es la fórmula que dice de τ lo que φ decía de x. No se sustituyen estancias ligadas y no se debe cambiar el sentido de la fórmula.</p>
+  <div class="box">
+    <h3>El peligro: la captura de variables (II.2.6)</h3>
+    <p>En ⟨ℕ, ≤⟩, <span class="m">∀x Rxy</span> dice que y es mayor o igual que todos: falso. Si sustituimos y por x sin más, queda <span class="m">∀x Rxx</span>, que dice que ≤ es reflexiva: verdadero. La x que entra ha quedado atrapada por el cuantificador.</p>
+    <p>Lo correcto es renombrar antes la variable ligada: <span class="m">∀z Rzx</span>.</p>
+  </div>
+  <div class="scroll">
+  <table class="cases">
+    <tr><td>Caso 1</td><td><span class="m">x ∉ LBR(∀zφ)</span></td><td>No hay nada que sustituir: queda <span class="m">∀z φ</span>.</td></tr>
+    <tr><td>Caso 2</td><td><span class="m">x ∈ LBR(∀zφ)</span> y <span class="m">z ∉ LBR(τ)</span></td><td>Se sustituye dentro: <span class="m" id="s2"></span>.</td></tr>
+    <tr><td>Caso 3</td><td><span class="m">x ∈ LBR(∀zφ)</span> y <span class="m">z ∈ LBR(τ)</span></td><td>Se renombra z con una variable nueva v y luego se sustituye: <span class="m" id="s3"></span>.</td></tr>
+  </table>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Calcula una sustitución</h2>
+  <p>Elige la fórmula, la variable y el término. Verás qué caso de la definición se aplica en cada cuantificador y qué habría dado la sustitución ingenua.</p>
+  <div id="demo-op"></div>
+</section>
+
+<section class="slide">
+  <h2>Teorema de sustitución</h2>
+  <div class="thm">
+    <span class="name">II.4.2</span>
+    <p>Dado un sistema 𝒜 y una asignación <span class="m">ℐ: V → A</span>:</p>
+    <p>a) Para cada término τ₀: <span class="m" id="t1"></span>.</p>
+    <p>b) Para cada fórmula φ: <span class="m" id="t2"></span> syss <span class="m" id="t3"></span>.</p>
+  </div>
+  <div class="two">
+    <div class="box"><h3>En el lenguaje</h3><p>Se cambia la fórmula: donde estaba x se escribe τ.</p></div>
+    <div class="box"><h3>En el sistema</h3><p>Se cambia la asignación: x pasa a valer lo que τ denotaba, <span class="m">𝒜ℐ(τ)</span>.</p></div>
+  </div>
+  <p>El teorema dice que los dos caminos llevan al mismo sitio. Por eso el libro lo describe como una especie de homomorfismo entre lenguaje y sistema.</p>
+</section>
+
+<section class="slide">
+  <h2>Compruébalo: los dos caminos coinciden</h2>
+  <p class="sys">Sistema: 𝒜 = ⟨{0, 1, 2, 3}, 0, f, ≤⟩, con c = 0 y f(a) = a + 1 módulo 4.</p>
+  <div id="demo-sem"></div>
+</section>
+
+<section class="slide">
+  <h2>Cómo se demuestra y dónde se usa</h2>
+  <div class="two">
+    <div class="box">
+      <h3>Demostración</h3>
+      <p>Inducción semiótica. Para <span class="m">∀z φ</span> hay un subcaso por cada caso de la definición, y en los tres interviene el teorema de coincidencia:</p>
+      <ul>
+        <li>Caso 1: cambiar el valor de x no afecta, porque x no está libre.</li>
+        <li>Caso 2: <span class="m" id="u1"></span>, porque z no está en τ.</li>
+        <li>Caso 3: lo mismo con la variable nueva v, tras renombrar.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Usos en el libro</h3>
+      <ul>
+        <li>Corrección de (IPA), (IPC) y (SI) en III.3.1.</li>
+        <li>Lema de Henkin: <span class="m">∃xφ ∈ Γ*</span> syss hay un τ con <span class="m" id="u2"></span> (III.4.5.5).</li>
+        <li>Renombrar variables ligadas: <span class="m" id="u3"></span> si z no está en φ (ejercicio 2 de II.4.3).</li>
+        <li>Paso de constantes nuevas a parámetros en los diagramas (IV.6).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Tres preguntas para cerrar</h2>
+  <div id="quiz" style="display:flex;flex-direction:column;gap:1rem"></div>
+</section>
+
+<footer class="credit">Aplicación de <b>Manuel Crescencio Moreno Gómez</b>, dedicada a los lógicos matemáticos de la Universidad de Córdoba.<br>Lógica · 2.º del grado en Matemáticas y Filosofía · M. Manzano, <i>Teoría de modelos</i>, II.4 · Licencia <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">CC BY-SA 4.0</a>.</footer>
+</main>
+
+<div class="pager"><div>
+  <button id="prev" aria-label="Lámina anterior">← Anterior</button>
+  <span><span id="pos">1</span> de <span id="tot"></span> <span class="hint">· flechas ← →</span></span>
+  <button id="next" aria-label="Lámina siguiente">Siguiente →</button>
+</div></div>
+
+<script id="logic">
+/* ---------- Términos, fórmulas, LBR, sustitución y evaluación (sin DOM) ---------- */
+const V=n=>({k:'var',n}), F=t=>({k:'f',t}), C={k:'c'};
+const R=(a,b)=>({k:'R',a,b}), not=f=>({k:'not',f}), and=(a,b)=>({k:'and',a,b}), imp=(a,b)=>({k:'imp',a,b});
+const all=(v,f)=>({k:'all',v,f}), ex=(v,f)=>({k:'ex',v,f});
+const x=V('x'), y=V('y'), z=V('z');
+function showT(t){ return t.k==='var'?t.n:t.k==='c'?'c':'f'+showT(t.t); }
+function show(f,top=true){
+  switch(f.k){
+    case 'R': return 'R'+showT(f.a)+showT(f.b);
+    case 'not': return '¬'+show(f.f,false);
+    case 'all': return '∀'+f.v+' '+show(f.f,false);
+    case 'ex': return '∃'+f.v+' '+show(f.f,false);
+    default:{ const s=show(f.a,false)+(f.k==='and'?' ∧ ':' → ')+show(f.b,false); return top?s:'('+s+')'; }
+  }
+}
+function varsT(t){ return t.k==='var'?new Set([t.n]):t.k==='c'?new Set():varsT(t.t); }
+function lbr(f){
+  switch(f.k){
+    case 'R': return new Set([...varsT(f.a),...varsT(f.b)]);
+    case 'not': return lbr(f.f);
+    case 'all': case 'ex': { const s=lbr(f.f); s.delete(f.v); return s; }
+    default: return new Set([...lbr(f.a),...lbr(f.b)]);
+  }
+}
+function allVars(f){
+  switch(f.k){
+    case 'R': return new Set([...varsT(f.a),...varsT(f.b)]);
+    case 'not': return allVars(f.f);
+    case 'all': case 'ex': { const s=allVars(f.f); s.add(f.v); return s; }
+    default: return new Set([...allVars(f.a),...allVars(f.b)]);
+  }
+}
+function subT(t,v,tau){ return t.k==='var'?(t.n===v?tau:t):t.k==='c'?t:F(subT(t.t,v,tau)); }
+/* Sustitución según la definición II.2.6.1; log recoge el caso aplicado en cada cuantificador. */
+function sub(f,v,tau,log){
+  switch(f.k){
+    case 'R': return R(subT(f.a,v,tau),subT(f.b,v,tau));
+    case 'not': return not(sub(f.f,v,tau,log));
+    case 'and': return and(sub(f.a,v,tau,log),sub(f.b,v,tau,log));
+    case 'imp': return imp(sub(f.a,v,tau,log),sub(f.b,v,tau,log));
+    default:{
+      const q=f.k==='all'?'∀':'∃';
+      if(!lbr(f).has(v)){ if(log) log.push({c:1,q:q+f.v,why:v+' no está libre en '+show(f)}); return f; }
+      if(!varsT(tau).has(f.v)){ if(log) log.push({c:2,q:q+f.v,why:f.v+' no aparece en '+showT(tau)}); return {k:f.k,v:f.v,f:sub(f.f,v,tau,log)}; }
+      const used=new Set([...allVars(f),...varsT(tau),v]);
+      const nv=['v','w','u','t'].find(n=>!used.has(n));
+      if(log) log.push({c:3,q:q+f.v,why:f.v+' aparece en '+showT(tau)+': se renombra como '+nv});
+      return {k:f.k,v:nv,f:sub(sub(f.f,f.v,V(nv),null),v,tau,log)};
+    }
+  }
+}
+/* Sustitución ingenua: reemplaza las estancias libres sin renombrar nunca. */
+function naive(f,v,tau){
+  switch(f.k){
+    case 'R': return R(subT(f.a,v,tau),subT(f.b,v,tau));
+    case 'not': return not(naive(f.f,v,tau));
+    case 'and': return and(naive(f.a,v,tau),naive(f.b,v,tau));
+    case 'imp': return imp(naive(f.a,v,tau),naive(f.b,v,tau));
+    default: return f.v===v?f:{k:f.k,v:f.v,f:naive(f.f,v,tau)};
+  }
+}
+const N=4;
+function evT(t,env){ return t.k==='var'?env[t.n]:t.k==='c'?0:(evT(t.t,env)+1)%N; }
+function ev(f,env){
+  switch(f.k){
+    case 'R': return evT(f.a,env)<=evT(f.b,env);
+    case 'not': return !ev(f.f,env);
+    case 'and': return ev(f.a,env)&&ev(f.b,env);
+    case 'imp': return !ev(f.a,env)||ev(f.b,env);
+    case 'all': for(let a=0;a<N;a++){ if(!ev(f.f,{...env,[f.v]:a})) return false; } return true;
+    case 'ex': for(let a=0;a<N;a++){ if(ev(f.f,{...env,[f.v]:a})) return true; } return false;
+  }
+}
+const CF=[all('x',R(x,y)), R(x,y), ex('z',and(R(x,z),not(R(z,x)))), and(R(x,y),ex('y',not(R(x,y)))), all('x',ex('y',R(x,y)))];
+const SF=[all('x',R(x,y)), all('z',imp(R(x,z),R(y,x))), imp(all('x',R(x,z)),not(ex('z',R(x,z)))), all('y',R(x,y)), and(R(x,y),ex('y',not(R(x,y)))), ex('y',all('z',imp(R(z,x),R(z,y))))];
+const TERMS=[x,y,z,F(x),F(y),F(z),C,F(F(x))];
+if(typeof module!=='undefined'){ module.exports={SF,TERMS,sub,naive,ev,evT,show,showT,lbr,N}; }
+</script>
+
+<script>
+const $=id=>document.getElementById(id);
+const el=(tag,cls,html)=>{const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e;};
+const st=(base,sup,sb)=>base+'<span class="ss"><span>'+sup+'</span><span>'+sb+'</span></span>';
+const A='<b>a</b>';
+/* Fórmulas fijas de las láminas */
+$('variant').innerHTML=st('ℐ',A,'x');
+$('pf1').innerHTML='𝒜'+st('ℐ₁',A,'x')+' sat φ';
+$('pf2').innerHTML=st('ℐ₁',A,'x')+' e '+st('ℐ₂',A,'x');
+$('pf3').innerHTML='𝒜'+st('ℐ',A,'x')+' sat φ';
+$('s0').innerHTML=st('S','τ','x')+'φ';
+$('s2').innerHTML='∀z '+st('S','τ','x')+'φ';
+$('s3').innerHTML='∀v '+st('S','τ','x')+st('S','v','z')+'φ';
+$('t1').innerHTML='𝒜'+st('ℐ','𝒜ℐ(τ)','x')+'(τ₀) = 𝒜ℐ('+st('S','τ','x')+'τ₀)';
+$('t2').innerHTML='𝒜'+st('ℐ','𝒜ℐ(τ)','x')+' sat φ';
+$('t3').innerHTML='𝒜ℐ sat '+st('S','τ','x')+'φ';
+$('u1').innerHTML='𝒜ℐ(τ) = 𝒜'+st('ℐ','<b>z</b>','z')+'(τ)';
+$('u2').innerHTML=st('S','τ','x')+'φ ∈ Γ*';
+$('u3').innerHTML='⊨ ∃x φ ↔ ∃z '+st('S','z','x')+'φ';
+const tv=(node,v)=>{ node.className='pill '+(v?'t':'f'); node.textContent=v?'verdadera':'falsa'; };
+function valSelect(id,label,val,onchange){
+  const l=el('label',null,label+' '); const s=el('select'); s.id=id;
+  for(let a=0;a<N;a++) s.append(new Option(a,a)); s.value=val; s.addEventListener('change',onchange); l.append(s); return [l,s];
+}
+
+/* ---------- Lámina 4: coincidencia ---------- */
+(function(){
+  const fs=$('c-f'); CF.forEach((f,i)=>fs.append(new Option(show(f),i)));
+  const init=[{x:0,y:3,z:1},{x:2,y:3,z:0}]; const sels=[{},{}];
+  [0,1].forEach(k=>['x','y','z'].forEach(v=>{ const [l,s]=valSelect('c-a'+(k+1)+v,v+' ↦',init[k][v],draw); sels[k][v]=s; $('c-a'+(k+1)).append(l); }));
+  fs.addEventListener('change',draw);
+  function draw(){
+    const f=CF[+fs.value]; const L=[...lbr(f)].sort();
+    $('c-lbr').textContent='LBR(φ) = '+(L.length?'{'+L.join(', ')+'}':'∅');
+    const e=[0,1].map(k=>({x:+sels[k].x.value,y:+sels[k].y.value,z:+sels[k].z.value}));
+    const v=e.map(env=>ev(f,env)); tv($('c-v1'),v[0]); tv($('c-v2'),v[1]);
+    const diff=L.filter(n=>e[0][n]!==e[1][n]); const box=$('c-verdict');
+    if(!diff.length){ box.className='verdict ok';
+      box.innerHTML='ℐ₁ y ℐ₂ coinciden en LBR(φ)'+(L.length?'':' (no hay variables libres que comparar)')+'. El teorema garantiza el mismo valor de verdad, y así es.'; }
+    else{ box.className='verdict no';
+      box.innerHTML='ℐ₁ y ℐ₂ difieren en '+diff.join(', ')+', que está'+(diff.length>1?'n':'')+' libre'+(diff.length>1?'s':'')+' en φ. El teorema no dice nada: esta vez los valores '+(v[0]===v[1]?'coinciden por casualidad.':'son distintos.'); }
+  }
+  draw();
+})();
+
+/* ---------- Láminas 7 y 9: sustitución ---------- */
+function subDemo(host,sem,pre){
+  const ctl=el('div','ctl');
+  const fs=el('select','f'); fs.id=pre+'-f'; SF.forEach((f,i)=>fs.append(new Option(show(f),i)));
+  const vs=el('select'); vs.id=pre+'-v'; ['x','y','z'].forEach(v=>vs.append(new Option(v,v))); vs.value='y';
+  const ts=el('select','f'); ts.id=pre+'-t'; TERMS.forEach((t,i)=>ts.append(new Option(showT(t),i)));
+  const lab=(txt,s)=>{ const l=el('label',null,txt+' '); l.append(s); return l; };
+  ctl.append(lab('Fórmula φ',fs),lab('Variable',vs),lab('Término τ',ts)); host.append(ctl);
+  const env={x:1,y:1,z:0}; let asg=null;
+  if(sem){ asg=el('div','ctl'); asg.append(el('span',null,'Asignación ℐ:'));
+    ['x','y','z'].forEach(v=>{ const [l,s]=valSelect(pre+'-a'+v,v+' ↦',env[v],()=>{ env[v]=+s.value; draw(); }); asg.append(l); }); host.append(asg); }
+  const out=el('div'); out.style.display='flex'; out.style.flexDirection='column'; out.style.gap='.6rem'; out.style.marginTop='.8rem'; out.setAttribute('aria-live','polite'); host.append(out);
+  [fs,vs,ts].forEach(s=>s.addEventListener('change',draw));
+  function draw(){
+    const f=SF[+fs.value], v=vs.value, tau=TERMS[+ts.value]; const log=[];
+    const good=sub(f,v,tau,log), bad=naive(f,v,tau); const captured=show(good)!==show(bad);
+    const Sx=st('S',showT(tau),v);
+    out.innerHTML='';
+    if(!sem){
+      out.append(el('div','line','<span>Resultado: <span class="m">'+Sx+'φ = <strong>'+show(good)+'</strong></span></span>'));
+      const ul=el('ul','log');
+      if(!log.length) ul.append(el('li',null,'No hay cuantificadores: se sustituye directamente en los términos.'));
+      log.forEach(l=>ul.append(el('li',null,'En <span class="m">'+l.q+'</span> se aplica el caso '+l.c+': '+l.why+'.')));
+      out.append(ul);
+      out.append(el('div','verdict '+(captured?'no':'ok'),captured?'La sustitución ingenua habría dado <span class="m">'+show(bad)+'</span>: una variable de τ quedaría capturada por un cuantificador.':'Aquí la sustitución ingenua da lo mismo: no hay captura.'));
+      return;
+    }
+    const a=evT(tau,env); const env2={...env,[v]:a};
+    const left=ev(good,env), right=ev(f,env2), nv=ev(bad,env);
+    const row=(html,val)=>{ const d=el('div','line','<span>'+html+'</span>'); const p=el('span'); tv(p,val); d.append(p); return d; };
+    const two=el('div','two');
+    const b1=el('div','box'); b1.append(el('h3',null,'Camino 1: sustituir en la fórmula'));
+    b1.append(el('p',null,'<span class="m">'+Sx+'φ = '+show(good)+'</span>'));
+    b1.append(row('<span class="m">𝒜ℐ sat '+Sx+'φ</span>',left));
+    const b2=el('div','box'); b2.append(el('h3',null,'Camino 2: cambiar la asignación'));
+    b2.append(el('p',null,'<span class="m">𝒜ℐ('+showT(tau)+') = '+a+'</span>, así que '+v+' pasa a valer '+a+'.'));
+    b2.append(row('<span class="m">𝒜'+st('ℐ',a,v)+' sat φ</span>',right));
+    two.append(b1,b2); out.append(two);
+    out.append(el('div','verdict '+(left===right?'ok':'no'),left===right?'Los dos caminos dan el mismo valor, como afirma el teorema.':'Los caminos difieren: esto no debería ocurrir.'));
+    if(captured) out.append(el('div','verdict '+(nv===right?'ok':'no'),'Sustitución ingenua: <span class="m">'+show(bad)+'</span> es '+(nv?'verdadera':'falsa')+' en 𝒜ℐ. '+(nv===right?'Con esta asignación acierta por casualidad; cambia los valores y verás que no siempre.':'No coincide con el camino 2: sin renombrar, el teorema falla.')));
+    else out.append(el('p','log','En este caso no hay captura de variables: la sustitución ingenua daría la misma fórmula.'));
+  }
+  draw();
+}
+subDemo($('demo-op'),false,'op'); subDemo($('demo-sem'),true,'sem');
+
+/* ---------- Preguntas ---------- */
+const QUIZ=[
+ {q:'<span class="m">LBR(φ) = {x}</span>. Las asignaciones ℐ₁ e ℐ₂ dan el mismo valor a x y valores distintos a y. ¿Qué se sabe?',
+  o:['𝒜ℐ₁ y 𝒜ℐ₂ dan a φ el mismo valor de verdad.','Dan valores de verdad distintos.','Nada: depende de φ.'],a:0,
+  why:'Coinciden en la única variable libre, y eso basta por el teorema de coincidencia.'},
+ {q:'¿Cuál es <span class="m">'+st('S','x','y')+'(∀x Rxy)</span>?',
+  o:['∀x Rxx','∀v Rvx','∀x Rxy'],a:1,
+  why:'Es el caso 3: la variable cuantificada x aparece en el término, así que se renombra antes de sustituir.'},
+ {q:'Según el teorema de sustitución, <span class="m">𝒜ℐ sat '+st('S','τ','x')+'φ</span> equivale a:',
+  o:['<span class="m">𝒜ℐ sat φ</span>','<span class="m">𝒜'+st('ℐ','𝒜ℐ(τ)','x')+' sat φ</span>','<span class="m">𝒜'+st('ℐ','ℐ(x)','x')+' sat '+st('S','τ','x')+'φ</span>'],a:1,
+  why:'Sustituir x por τ en la fórmula es lo mismo que dar a x, en la asignación, el individuo que τ denota.'}
+];
+QUIZ.forEach((it,i)=>{
+  const c=el('div','box'); c.append(el('p',null,(i+1)+'. '+it.q));
+  const opts=el('div','opts'); const fb=el('div');
+  it.o.forEach((o,j)=>{ const b=el('button',null,o); b.id='q'+i+'o'+j;
+    b.addEventListener('click',()=>{ opts.querySelectorAll('button').forEach(n=>n.classList.remove('right','wrong'));
+      if(j===it.a){ b.classList.add('right'); fb.className='verdict ok'; fb.innerHTML=it.why; } else { b.classList.add('wrong'); fb.className='verdict no'; fb.innerHTML='No es esa. Prueba otra.'; } });
+    opts.append(b); });
+  c.append(opts,fb); $('quiz').append(c);
+});
+
+/* ---------- Paso de láminas ---------- */
+const slides=[...document.querySelectorAll('.slide')]; let cur=0;
+$('tot').textContent=slides.length;
+slides.forEach((s,i)=>{ s.id='lamina-'+(i+1); if(i>0) s.prepend(el('span','num','Lámina '+(i+1)+' de '+slides.length)); });
+function go(i){ cur=Math.max(0,Math.min(slides.length-1,i)); slides[cur].scrollIntoView({block:'start'}); $('pos').textContent=cur+1; }
+$('prev').addEventListener('click',()=>go(cur-1)); $('next').addEventListener('click',()=>go(cur+1));
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='SELECT'||e.target.tagName==='INPUT') return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'){ e.preventDefault(); go(cur+1); }
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+});
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ cur=slides.indexOf(e.target); $('pos').textContent=cur+1; } }),{rootMargin:'-45% 0px -45% 0px'});
+  slides.forEach(s=>io.observe(s));
+}
+</script>
+</body>
+</html>

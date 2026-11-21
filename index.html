@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lógica · Prácticas interactivas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231f3b63%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27serif%27%3E%E2%8A%A2%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Prácticas interactivas de metalógica: cálculo de secuentes de Manzano, teorema de corrección, coincidencia y sustitución. Lógica, 2.º del grado en Matemáticas y Filosofía (Universidad de Córdoba).">
+<link rel="stylesheet" href="fuentes/fuentes.css">
+<style>
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#18212f; --muted:#5a6678; --line:#d5dbe5;
+  --accent:#1f3b63; --accent-soft:#e4ebf5;
+  --font-body:"STIX Two Text","Cambria","Times New Roman",serif;
+  --font-ui:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{color-scheme:dark;--bg:#111722;--surface:#1a2231;--ink:#e6ebf3;--muted:#9aa7ba;--line:#313c50;--accent:#9dbcf0;--accent-soft:#25324a}
+}
+*{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.55}
+main{max-width:46rem;margin:0 auto;padding:2.5rem 1.1rem 3rem;display:flex;flex-direction:column;gap:2rem}
+h1,h2{font-family:var(--font-ui);margin:0;line-height:1.2;text-wrap:balance}
+h1{font-size:2rem;font-weight:600;color:var(--accent)}
+h2{font-size:1.15rem;font-weight:600}
+p{margin:0}
+.kicker{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+header{display:flex;flex-direction:column;gap:.7rem}
+.lead{font-size:1.1rem}
+.list{display:flex;flex-direction:column;gap:1rem}
+a.card{display:flex;flex-direction:column;gap:.45rem;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:.4rem;padding:1rem 1.15rem;color:inherit;text-decoration:none}
+a.card:hover{border-color:var(--accent)}
+a.card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a.card h2{color:var(--accent)}
+.ref{font-family:var(--font-ui);font-size:.8rem;color:var(--muted)}
+.note{font-family:var(--font-ui);font-size:.88rem;color:var(--muted);display:flex;flex-direction:column;gap:.6rem;border-top:1px solid var(--line);padding-top:1.2rem}
+.note a{color:var(--accent)}
+.note b{color:var(--ink);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <span class="kicker">Lógica · 2.º del grado en Matemáticas y Filosofía · Universidad de Córdoba</span>
+  <h1>Prácticas interactivas de metalógica</h1>
+  <p class="lead">Tres aplicaciones para practicar en clase o por tu cuenta el cálculo de secuentes y los primeros teoremas semánticos, siguiendo la <i>Teoría de modelos</i> de María Manzano. Cada una comprueba tus respuestas y explica qué falla.</p>
+</header>
+
+<div class="list">
+  <a class="card" href="secuentes.html">
+    <h2>Taller de secuentes</h2>
+    <p>Construye deducciones línea a línea con las reglas del cálculo. La página comprueba cada aplicación de regla, incluida la condición sobre las variables en (IPA) e (IGC). Hay 36 ejercicios: conectores, cuantificadores, igualdad, justificación de reglas derivadas y deducciones con un error que hay que encontrar.</p>
+    <span class="ref">Manzano, cap. III</span>
+  </a>
+  <a class="card" href="coincidencia-sustitucion.html">
+    <h2>Coincidencia y sustitución</h2>
+    <p>Presentación con láminas interactivas sobre los dos teoremas en los que se apoya casi todo lo demás. Puedes comparar dos asignaciones sobre una misma fórmula, calcular sustituciones con renombramiento y comprobar que sustituir en la fórmula equivale a cambiar la asignación.</p>
+    <span class="ref">Manzano, II.4.1 y II.4.2</span>
+  </a>
+  <a class="card" href="correccion.html">
+    <h2>Práctica del teorema de corrección</h2>
+    <p>Preguntas sobre el enunciado y sus consecuencias, reglas correctas e incorrectas, la justificación paso a paso de (IPA), contramodelos que se construyen a mano y la corrección de las demás reglas del cálculo.</p>
+    <span class="ref">Manzano, III.3</span>
+  </a>
+</div>
+
+<div class="note">
+  <p><b>Privacidad.</b> Las páginas no recogen ningún dato ni usan cookies, y no cargan nada desde servidores de terceros. El taller de secuentes guarda tus deducciones solo en tu navegador, para que puedas seguir otro día.</p>
+  <p><b>Autoría y licencia.</b> Aplicaciones de Manuel Crescencio Moreno Gómez, dedicadas a los lógicos matemáticos de la Universidad de Córdoba. Se publican con licencia <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">CC BY-SA 4.0</a>: puedes usarlas, compartirlas y adaptarlas citando la autoría y manteniendo la misma licencia. Las tipografías (STIX Two Text e IBM Plex Sans) tienen licencia SIL Open Font License.</p>
+  <p><b>Referencia.</b> M. Manzano, <i>Teoría de modelos</i>, Alianza Editorial.</p>
+</div>
+</main>
+</body>
+</html>

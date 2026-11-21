@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Práctica del teorema de corrección</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231f3b63%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27serif%27%3E%E2%8A%A2%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="fuentes/fuentes.css">
+<style>
+:root{
+  /* Cuaderno de ejercicios: una columna de lectura, bloques numerados, fórmulas en serif matemática y controles en sans. */
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#18212f; --muted:#5a6678; --line:#d5dbe5;
+  --accent:#1f3b63; --accent-soft:#e4ebf5;
+  --ok:#1b6045; --ok-soft:#e1f1e9; --bad:#a23a1c; --bad-soft:#f8e6df;
+  --font-body:"STIX Two Text","Cambria","Times New Roman",serif;
+  --font-ui:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --font-math:"STIX Two Text","STIX Two Math","Cambria Math","Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111722; --surface:#1a2231; --ink:#e6ebf3; --muted:#9aa7ba; --line:#313c50;
+    --accent:#9dbcf0; --accent-soft:#25324a;
+    --ok:#7fd3a8; --ok-soft:#183628; --bad:#f0a085; --bad-soft:#3d2219;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111722; --surface:#1a2231; --ink:#e6ebf3; --muted:#9aa7ba; --line:#313c50;
+  --accent:#9dbcf0; --accent-soft:#25324a;
+  --ok:#7fd3a8; --ok-soft:#183628; --bad:#f0a085; --bad-soft:#3d2219;
+}
+*{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.5}
+main{max-width:46rem;margin:0 auto;padding:1.5rem 1rem 4rem;display:flex;flex-direction:column;gap:1.5rem}
+h1,h2,h3{font-family:var(--font-ui);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:1.7rem;font-weight:600;color:var(--accent)}
+h2{font-size:1.2rem;font-weight:600}
+h3{font-size:.95rem;font-weight:600}
+p{margin:0}
+.kicker{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.m{font-family:var(--font-math);white-space:nowrap}
+.ss{display:inline-flex;flex-direction:column;font-size:.68em;line-height:1;vertical-align:middle;margin-left:.05em;margin-right:.1em}
+header{display:flex;flex-direction:column;gap:.75rem}
+.statement{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);padding:.9rem 1rem;display:flex;flex-direction:column;gap:.4rem}
+.statement .big{font-size:1.2rem}
+.progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:.5rem 0;display:flex;align-items:center;gap:.75rem;font-family:var(--font-ui);font-size:.85rem;border-bottom:1px solid var(--line)}
+.bar{flex:1;height:.5rem;background:var(--accent-soft);border-radius:1rem;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+.progress nav{display:flex;gap:.6rem}
+.progress a{color:var(--accent);text-decoration:none;font-weight:500}
+.progress a:hover{text-decoration:underline}
+section{display:flex;flex-direction:column;gap:1rem}
+.sec-head{display:flex;flex-direction:column;gap:.35rem}
+.sec-head p{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:.4rem;padding:1rem;display:flex;flex-direction:column;gap:.75rem}
+.card.done{border-color:var(--ok)}
+.card-top{display:flex;justify-content:space-between;gap:.75rem;align-items:baseline}
+.tag{font-family:var(--font-ui);font-size:.75rem;color:var(--muted)}
+.state{font-family:var(--font-ui);font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:1rem;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.done .state{background:var(--ok-soft);color:var(--ok)}
+button,select{font-family:var(--font-ui);font-size:.9rem;color:var(--ink)}
+button{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:.35rem;padding:.45rem .8rem;text-align:left}
+button:hover{border-color:var(--accent)}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--surface);border-color:var(--accent);font-weight:500}
+.opts{display:flex;flex-direction:column;gap:.4rem}
+.opts button.right{border-color:var(--ok);background:var(--ok-soft)}
+.opts button.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.fb{font-size:.95rem;padding:.6rem .75rem;border-radius:.35rem;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--ok-soft);color:var(--ink);border-left:3px solid var(--ok)}
+.fb.no{background:var(--bad-soft);color:var(--ink);border-left:3px solid var(--bad)}
+.rule{display:inline-grid;grid-template-columns:auto auto;column-gap:1.4rem;row-gap:.15rem;font-size:1.15rem;padding:.2rem .4rem;align-self:flex-start}
+.rule .sep{grid-column:1/3;border-top:1.5px solid var(--ink);margin:.15rem 0}
+.rule-wrap{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;overflow-x:auto}
+.cond{font-family:var(--font-ui);font-size:.82rem;color:var(--muted)}
+ol.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.6rem;counter-reset:s}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:1.6rem 1fr;gap:.25rem .5rem;align-items:start;padding:.5rem;border:1px solid var(--line);border-radius:.35rem}
+ol.steps li::before{content:counter(s) ".";font-family:var(--font-ui);color:var(--muted)}
+ol.steps li.right{border-color:var(--ok);background:var(--ok-soft)}
+ol.steps li.wrong{border-color:var(--bad);background:var(--bad-soft)}
+ol.steps select{grid-column:2;max-width:100%;padding:.3rem;background:var(--surface);border:1px solid var(--line);border-radius:.3rem}
+.model{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media (max-width:620px){.model{grid-template-columns:1fr}}
+.panel{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.panel h3{color:var(--muted)}
+.ctl{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;font-family:var(--font-ui);font-size:.88rem}
+.ctl .lbl{min-width:4.6rem}
+.chip{padding:.2rem .65rem;border-radius:1rem;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+table.rel{border-collapse:collapse;font-family:var(--font-ui);font-size:.85rem}
+table.rel th,table.rel td{padding:.15rem .35rem;text-align:center}
+table.rel input{width:1.05rem;height:1.05rem;accent-color:var(--accent)}
+ul.truth{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.35rem}
+ul.truth li{display:flex;justify-content:space-between;gap:.75rem;align-items:center;padding:.3rem .5rem;border:1px solid var(--line);border-radius:.3rem}
+ul.truth li.concl{border-style:dashed}
+.tv{font-family:var(--font-ui);font-size:.75rem;font-weight:600;padding:.1rem .45rem;border-radius:1rem;white-space:nowrap}
+.tv.t{background:var(--ok-soft);color:var(--ok)}
+.tv.f{background:var(--bad-soft);color:var(--bad)}
+.small{font-size:.9rem;color:var(--muted)}
+footer{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:.4rem}
+footer a,.back{color:var(--accent)}
+.back{font-family:var(--font-ui);font-size:.85rem;text-decoration:none}
+.back:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <a class="back" href="./">← Todas las prácticas</a>
+  <span class="kicker">Teoría de modelos · Capítulo III, apartado 3</span>
+  <h1>Práctica del teorema de corrección</h1>
+  <div class="statement">
+    <p class="big">Si <span class="m">Φ ⊢ φ</span>, entonces <span class="m">Φ ⊨ φ</span>.</p>
+    <p>El cálculo nunca lleva de premisas verdaderas a conclusiones falsas. Se demuestra regla a regla: las reglas sin premisas dan secuencias correctas y las demás llevan de secuencias correctas a secuencias correctas. Una secuencia <span class="m">Γ φ</span> es correcta cuando <span class="m">Γ ⊨ φ</span>.</p>
+  </div>
+</header>
+
+<div class="progress" aria-live="polite">
+  <span id="count">0 de 0</span>
+  <div class="bar"><span id="barfill"></span></div>
+  <nav aria-label="Bloques"><a href="#b1">1</a><a href="#b2">2</a><a href="#b3">3</a><a href="#b4">4</a><a href="#b5">5</a></nav>
+</div>
+
+<section id="b1">
+  <div class="sec-head">
+    <h2>1. Qué dice el teorema y para qué sirve</h2>
+    <p>Seis preguntas de opción única. Puedes reintentar; cada una cuenta cuando aciertas.</p>
+  </div>
+  <div id="quiz" class="row" style="flex-direction:column;align-items:stretch;gap:1rem"></div>
+</section>
+
+<section id="b2">
+  <div class="sec-head">
+    <h2>2. ¿Es correcta esta regla?</h2>
+    <p>En cada línea, la última fórmula es la conclusión y lo anterior es el antecedente. Decide si la regla lleva siempre de secuencias correctas a secuencias correctas. Las tres primeras son el ejercicio 2 de III.3.3.</p>
+  </div>
+  <div id="rules" class="row" style="flex-direction:column;align-items:stretch;gap:1rem"></div>
+</section>
+
+<section id="b3">
+  <div class="sec-head">
+    <h2>3. Justifica la corrección de (IPA)</h2>
+    <p>Es la única regla cuya corrección el libro demuestra con detalle (III.3.1.7). Suponemos <span class="m">Γ S<span class="ss"><span>y</span><span>x</span></span>φ ⊨ ψ</span> con <span class="m">y ∉ LBR(Γ ∪ {∃xφ, ψ})</span>, y tomamos una interpretación <span class="m">𝒜ℐ</span> que es modelo de <span class="m">Γ ∪ {∃xφ}</span>. Elige qué justifica cada paso.</p>
+  </div>
+  <div class="card" id="ipa-card">
+    <div class="card-top"><span class="tag">Seis pasos y tres usos de la condición sobre y</span><span class="state" id="ipa-state">0 de 9</span></div>
+    <ol class="steps" id="ipa"></ol>
+    <h3>¿Dónde se usa cada parte de la condición?</h3>
+    <ol class="steps" id="ipa2"></ol>
+    <div class="row"><button class="primary" id="ipa-check">Comprobar justificaciones</button></div>
+    <div class="fb" id="ipa-fb"></div>
+  </div>
+</section>
+
+<section id="b4">
+  <div class="sec-head">
+    <h2>4. Contramodelos: no derivable porque no es consecuencia</h2>
+    <p>Por corrección, si encuentras una interpretación que satisface las premisas y no la conclusión, la conclusión no es derivable de ellas. Construye el sistema: elige el universo, marca qué elementos están en cada relación y da valor a las variables libres. Una de las siete consecuencias sí es válida: ahí la respuesta es que no existe contramodelo.</p>
+  </div>
+  <div id="models" class="row" style="flex-direction:column;align-items:stretch;gap:1rem"></div>
+</section>
+
+<section id="b5">
+  <div class="sec-head">
+    <h2>5. Completa la corrección de las demás reglas</h2>
+    <p>El libro deja como ejercicio la corrección de (NC), (IDA), (IDC), (IPC), (RI) y (SI) (III.3.3, ejercicio 1). En cada regla, suponemos correctas las secuencias de arriba y tomamos una interpretación <span class="m">𝒜ℐ</span> que satisface el antecedente de la de abajo. Elige lo que completa cada paso.</p>
+  </div>
+  <div id="others" class="row" style="flex-direction:column;align-items:stretch;gap:1rem"></div>
+</section>
+
+<footer>Referencias al libro de M. Manzano, <em>Teoría de modelos</em>: teorema de corrección III.3.1, test de consistencia III.3.2, ejercicios III.3.3, teoremas de coincidencia y sustitución II.4.1 y II.4.2.<span>Aplicación de <b>Manuel Crescencio Moreno Gómez</b>, dedicada a los lógicos matemáticos de la Universidad de Córdoba · Lógica, 2.º del grado en Matemáticas y Filosofía · Licencia <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">CC BY-SA 4.0</a>.</span></footer>
+</main>
+
+<script id="logic">
+/* ---------- Fórmulas y evaluación (sin DOM) ---------- */
+const P=t=>({k:'P',t}), Q=t=>({k:'Q',t}), R=(a,b)=>({k:'R',a,b});
+const not=f=>({k:'not',f}), and=(a,b)=>({k:'and',a,b}), or=(a,b)=>({k:'or',a,b}), imp=(a,b)=>({k:'imp',a,b});
+const all=(v,f)=>({k:'all',v,f}), ex=(v,f)=>({k:'ex',v,f});
+function show(f,top=true){
+  switch(f.k){
+    case 'P': return 'P'+f.t; case 'Q': return 'Q'+f.t; case 'R': return 'R'+f.a+f.b;
+    case 'not': return '¬'+show(f.f,false);
+    case 'all': return '∀'+f.v+' '+show(f.f,false);
+    case 'ex': return '∃'+f.v+' '+show(f.f,false);
+    default:{
+      const op={and:' ∧ ',or:' ∨ ',imp:' → '}[f.k];
+      const s=show(f.a,false)+op+show(f.b,false);
+      return top?s:'('+s+')';
+    }
+  }
+}
+function ev(f,M,env){
+  switch(f.k){
+    case 'P': return M.P.has(env[f.t]);
+    case 'Q': return M.Q.has(env[f.t]);
+    case 'R': return M.R.has(env[f.a]+','+env[f.b]);
+    case 'not': return !ev(f.f,M,env);
+    case 'and': return ev(f.a,M,env)&&ev(f.b,M,env);
+    case 'or': return ev(f.a,M,env)||ev(f.b,M,env);
+    case 'imp': return !ev(f.a,M,env)||ev(f.b,M,env);
+    case 'all': for(let a=0;a<M.n;a++){ if(!ev(f.f,M,{...env,[f.v]:a})) return false; } return true;
+    case 'ex': for(let a=0;a<M.n;a++){ if(ev(f.f,M,{...env,[f.v]:a})) return true; } return false;
+  }
+}
+const TASKS=[
+ {id:'m1',title:'La regla 1 del bloque 2',prem:[P('y')],concl:all('x',P('x')),preds:['P'],vars:['y'],valid:false,
+  hint:'Basta que el valor de y esté en P y otro elemento no.',
+  done:'Py ⊭ ∀x Px. Por eso (IGC) exige que y no esté libre en Γ: sin esa condición la regla derivaría algo que no es consecuencia.'},
+ {id:'m2',title:'(IPA) sin la condición sobre y',prem:[ex('x',P('x'))],concl:P('y'),preds:['P'],vars:['y'],valid:false,
+  hint:'Algún elemento debe estar en P, pero no el que nombra y.',
+  done:'∃x Px ⊭ Py, aunque Py ⊨ Py. Con ψ = Py, la regla (IPA) sin «y ∉ LBR(ψ)» no sería correcta.'},
+ {id:'m3',title:'La regla 3 del bloque 2',prem:[Q('x'),ex('x',P('x'))],concl:ex('x',and(P('x'),Q('x'))),preds:['P','Q'],vars:['x'],valid:false,
+  hint:'Qx habla del valor de x; el testigo de ∃x Px puede ser otro elemento.',
+  done:'Qx, Px ⊨ Px ∧ Qx, pero Qx, ∃x Px ⊭ ∃x (Px ∧ Qx). La regla falla porque x está libre en Γ.'},
+ {id:'m4',title:'Ejercicio 3 de II.2.8',prem:[all('y',ex('x',R('x','y')))],concl:ex('x',all('y',R('x','y'))),preds:['R'],vars:[],valid:false,
+  hint:'Cada elemento necesita alguien relacionado con él, pero nadie debe estarlo con todos.',
+  done:'∀y∃x Rxy ⊭ ∃x∀y Rxy: por corrección, la segunda no es derivable de la primera.'},
+ {id:'m5',title:'El recíproco',prem:[ex('x',all('y',R('x','y')))],concl:all('y',ex('x',R('x','y'))),preds:['R'],vars:[],valid:true,
+  hint:'Si un mismo elemento está relacionado con todos, ¿puede quedar alguno sin nadie relacionado con él?',
+  done:'Correcto: ∃x∀y Rxy ⊨ ∀y∃x Rxy, así que ningún sistema sirve de contramodelo. Aquí corrección no dice nada; es completud la que asegura que además es derivable.'},
+ {id:'m6',title:'Ejercicio 13 b) de II.2.8',prem:[ex('x',P('x')),ex('x',Q('x'))],concl:ex('x',and(P('x'),Q('x'))),preds:['P','Q'],vars:[],valid:false,
+  hint:'P y Q no vacíos y disjuntos.',
+  done:'∃x Px ∧ ∃x Qx no tiene como consecuencia ∃x (Px ∧ Qx).'},
+ {id:'m7',title:'Afirmación del consecuente',prem:[all('x',imp(P('x'),Q('x'))),Q('y')],concl:P('y'),preds:['P','Q'],vars:['y'],valid:false,
+  hint:'El valor de y está en Q y no en P; cuida que P siga contenido en Q.',
+  done:'∀x (Px → Qx), Qy ⊭ Py: ninguna deducción del cálculo puede llegar a Py desde esas premisas.'}
+];
+function isCounter(t,M,env){ return t.prem.every(p=>ev(p,M,env)) && !ev(t.concl,M,env); }
+if(typeof module!=='undefined'){ module.exports={TASKS,ev,isCounter,show}; }
+</script>
+
+<script>
+/* ---------- Progreso ---------- */
+const solved=new Set(); let TOTAL=0;
+function mark(id){ solved.add(id); refresh(); }
+function refresh(){
+  document.getElementById('count').textContent=solved.size+' de '+TOTAL;
+  document.getElementById('barfill').style.width=(TOTAL?100*solved.size/TOTAL:0)+'%';
+}
+const el=(tag,cls,html)=>{const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e;};
+const S=(x,t)=>'S<span class="ss"><span>'+t+'</span><span>'+x+'</span></span>';
+const I=(x,a)=>'ℐ<span class="ss"><span>'+a+'</span><span>'+x+'</span></span>';
+const m=s=>'<span class="m">'+s+'</span>';
+
+/* ---------- Bloque 1 ---------- */
+const QUIZ=[
+ {q:'¿Cuál es el enunciado del teorema de corrección?',
+  o:['Si '+m('Φ ⊨ φ')+' entonces '+m('Φ ⊢ φ')+'.','Si '+m('Φ ⊢ φ')+' entonces '+m('Φ ⊨ φ')+'.','Φ es consistente si y sólo si cada subconjunto finito suyo lo es.'],a:1,
+  why:'Corrección va de la deducibilidad a la consecuencia. La implicación contraria es el teorema de completud de Gödel (III.4.2).'},
+ {q:'En el diagrama de la introducción del capítulo, con TL los teoremas lógicos y FLV las fórmulas lógicamente válidas, corrección afirma que:',
+  o:['FLV ⊆ TL','TL ⊆ FLV','TL ∩ FLV = ∅'],a:1,
+  why:'Todo lo que se deduce sin premisas es verdadero en todos los sistemas. FLV ⊆ TL es completud.'},
+ {q:'¿Qué hay que comprobar para demostrar el teorema?',
+  o:['Que cada fórmula válida tiene una deducción.','Que las reglas sin premisas dan secuencias correctas y las demás llevan de secuencias correctas a secuencias correctas.','Que todo conjunto consistente tiene un modelo.'],a:1,
+  why:'Una deducción es una sucesión finita de secuencias obtenidas con las reglas; si cada regla conserva la corrección, toda línea cumple '+m('Γ ⊨ φ')+'.'},
+ {q:'Has encontrado una interpretación que es modelo de Γ y no de φ. ¿Qué te permite concluir el teorema de corrección?',
+  o:[m('Γ ⊬ φ'),m('Γ ⊢ ¬φ'),'Γ es contradictorio'],a:0,
+  why:'El contramodelo da '+m('Γ ⊭ φ')+' y, por contraposición de corrección, '+m('Γ ⊬ φ')+'. No dice nada de ¬φ: puede que tampoco sea derivable.'},
+ {q:'El test de consistencia (III.3.2) dice que si Γ es satisfacible entonces es consistente. ¿Cómo se obtiene?',
+  o:['De corrección: si Γ fuera contradictorio, '+m('Γ ⊢ φ ∧ ¬φ')+', luego '+m('Γ ⊨ φ ∧ ¬φ')+', y Γ no tendría modelos.','Del lema de Lindenbaum.','Del teorema de Löwenheim-Skolem.'],a:0,
+  why:'Ninguna interpretación satisface una fórmula y su negación. El recíproco, que todo conjunto consistente tiene modelo, es el teorema de Henkin.'},
+ {q:'Problema 6: cada subconjunto finito de Δ tiene un modelo. ¿Qué se puede afirmar sin usar compacidad?',
+  o:['Que Δ tiene un modelo.','Que Δ es consistente.','Nada sobre Δ.'],a:1,
+  why:'Cada subconjunto finito es satisfacible, luego consistente por el test de consistencia. Una deducción de una contradicción sólo usa un número finito de fórmulas de Δ (III.1.2), así que Δ es consistente.'}
+];
+function buildQuiz(){
+  const box=document.getElementById('quiz');
+  QUIZ.forEach((it,i)=>{
+    TOTAL++;
+    const c=el('div','card');
+    c.append(el('div','card-top','<span class="tag">Pregunta '+(i+1)+'</span><span class="state">Pendiente</span>'));
+    c.append(el('p',null,it.q));
+    const opts=el('div','opts'); const fb=el('div','fb');
+    it.o.forEach((o,j)=>{
+      const b=el('button',null,o); b.id='q'+i+'o'+j;
+      b.addEventListener('click',()=>{
+        opts.querySelectorAll('button').forEach(x=>x.classList.remove('right','wrong'));
+        if(j===it.a){ b.classList.add('right'); fb.className='fb show ok'; fb.innerHTML=it.why; c.classList.add('done'); c.querySelector('.state').textContent='Resuelta'; mark('q'+i); }
+        else{ b.classList.add('wrong'); fb.className='fb show no'; fb.innerHTML='No es esa. Prueba otra opción.'; }
+      });
+      opts.append(b);
+    });
+    c.append(opts,fb); box.append(c);
+  });
+}
+
+/* ---------- Bloque 2 ---------- */
+const RULES=[
+ {p:[['Γ',S('x','y')+'φ']],c:['Γ','∀x φ'],cond:'Como (IGC), pero sin exigir nada a la variable y.',a:false,
+  why:'Con Γ = {Py} y φ = Px: '+m('Py ⊨ Py')+', pero '+m('Py ⊭ ∀x Px')+'. La condición '+m('y ∉ LBR(Γ ∪ {∀xφ})')+' es imprescindible. Constrúyelo en el bloque 4.'},
+ {p:[['φ','ψ']],c:['∃x φ','∃x ψ'],a:true,
+  why:'Si '+m('𝒜ℐ')+' satisface ∃xφ, hay un individuo '+m('<b>a</b>')+' tal que '+m('𝒜'+I('x','<b>a</b>'))+' satisface φ. Como '+m('φ ⊨ ψ')+' vale para toda interpretación, también satisface ψ, y por tanto '+m('𝒜ℐ')+' satisface ∃xψ.'},
+ {p:[['Γ φ','ψ']],c:['Γ ∃x φ','∃x ψ'],a:false,
+  why:'Falla cuando x está libre en Γ. Con Γ = {Qx}, φ = Px, ψ = Px ∧ Qx: '+m('Qx, Px ⊨ Px ∧ Qx')+', pero '+m('Qx, ∃x Px ⊭ ∃x (Px ∧ Qx)')+'. La regla anterior es el caso Γ = ∅.'},
+ {p:[['Γ','φ ∨ ψ']],c:['Γ','φ'],a:false,
+  why:'De '+m('Γ ⊨ φ ∨ ψ')+' no se sigue '+m('Γ ⊨ φ')+': '+m('⊨ Px ∨ ¬Px')+' y, sin embargo, '+m('⊭ Px')+'. Para eliminar el disyuntor (ED) hace falta además '+m('Γ ⊨ ¬ψ')+'.'},
+ {p:[['Γ ¬φ','¬ψ']],c:['Γ ψ','φ'],a:true,
+  why:'Es la contraposición (Cp) b). Si una interpretación satisface Γ y ψ pero no φ, satisface Γ y ¬φ, luego ¬ψ por la premisa: imposible.'},
+ {p:[['Γ','∀x φ']],c:['Γ','∃x φ'],a:true,
+  why:'Correcta porque el universo de un sistema nunca es vacío (I.1.1): si todos los individuos cumplen φ, alguno la cumple.'},
+ {p:[['Γ','∃x φ']],c:['Γ',S('x','τ')+'φ'],a:false,
+  why:m('∃x Px ⊨ ∃x Px')+', pero '+m('∃x Px ⊭ Py')+': que haya un testigo no dice que lo sea el individuo que denota τ. Es (IPC) leída al revés.'},
+ {p:[['Γ φ','ψ'],['Γ','ψ']],c:['Γ','φ'],a:false,
+  why:'Es afirmar el consecuente. Con Γ = ∅, φ = Px, ψ = Px ∨ ¬Px se cumplen las dos premisas y '+m('⊭ Px')+'.'}
+];
+function seq(s){ return '<span>'+s[0]+'</span><span>'+s[1]+'</span>'; }
+function buildRules(){
+  const box=document.getElementById('rules');
+  RULES.forEach((it,i)=>{
+    TOTAL++;
+    const c=el('div','card');
+    c.append(el('div','card-top','<span class="tag">Regla '+(i+1)+'</span><span class="state">Pendiente</span>'));
+    const w=el('div','rule-wrap');
+    w.append(el('div','rule m',it.p.map(seq).join('')+'<span class="sep"></span>'+seq(it.c)));
+    if(it.cond) w.append(el('span','cond',it.cond));
+    c.append(w);
+    const row=el('div','row opts'); row.style.flexDirection='row'; const fb=el('div','fb');
+    [['Correcta',true],['No es correcta',false]].forEach(([txt,val])=>{
+      const b=el('button',null,txt); b.id='r'+i+(val?'s':'n');
+      b.addEventListener('click',()=>{
+        row.querySelectorAll('button').forEach(x=>x.classList.remove('right','wrong'));
+        if(val===it.a){ b.classList.add('right'); fb.className='fb show ok'; fb.innerHTML=it.why; c.classList.add('done'); c.querySelector('.state').textContent='Resuelta'; mark('r'+i); }
+        else{ b.classList.add('wrong'); fb.className='fb show no'; fb.innerHTML=it.a?'Sí lo es. Intenta imaginar una interpretación que satisfaga el antecedente de la conclusión y no su conclusión: verás que la premisa lo impide.':'No lo es. Busca Γ, φ y ψ concretas para las que las premisas sean correctas y la conclusión no.'; }
+      });
+      row.append(b);
+    });
+    c.append(row,fb); box.append(c);
+  });
+}
+
+/* ---------- Bloque 3 ---------- */
+const JUST=['Definición de satisfacción de ∃','Teorema de coincidencia (II.4.1; ejercicio 1 de II.4.3)','Teorema de sustitución (II.4.2)','Hipótesis: Γ Sφ ⊨ ψ','Regla (IPC)'];
+const A='<b>a</b>';
+const IPA=[
+ {t:'Hay un individuo '+m(A+' ∈ A')+' tal que '+m('𝒜'+I('x',A))+' satisface φ.',a:0},
+ {t:m('𝒜'+I('yx',A+A))+' satisface φ: cambiar además el valor de y no altera nada.',a:1},
+ {t:m('𝒜'+I('y',A))+' satisface '+m(S('x','y')+'φ')+', porque en esa interpretación y denota a '+m(A)+'.',a:2},
+ {t:m('𝒜'+I('y',A))+' sigue siendo modelo de Γ.',a:1},
+ {t:m('𝒜'+I('y',A))+' satisface ψ.',a:3},
+ {t:m('𝒜ℐ')+' satisface ψ, que es lo que queríamos.',a:1}
+];
+const WHERE=['Paso 2','Paso 3','Paso 4','Paso 5','Paso 6'];
+const IPA2=[
+ {t:m('y ∉ LBR(∃xφ)'),a:0},{t:m('y ∉ LBR(Γ)'),a:2},{t:m('y ∉ LBR(ψ)'),a:4}
+];
+function buildIPA(){
+  const mk=(list,opts,host,prefix)=>list.forEach((s,i)=>{
+    TOTAL++;
+    const li=el('li'); li.append(el('div',null,s.t));
+    const sel=el('select'); sel.id=prefix+i; sel.setAttribute('aria-label','Justificación');
+    sel.append(new Option('Elige…',''));
+    opts.forEach((o,j)=>sel.append(new Option(o,j)));
+    li.append(sel); host.append(li); s.sel=sel; s.li=li; s.id=prefix+i;
+  });
+  mk(IPA,JUST,document.getElementById('ipa'),'ipa-s');
+  mk(IPA2,WHERE,document.getElementById('ipa2'),'ipa-w');
+  document.getElementById('ipa-check').addEventListener('click',()=>{
+    let ok=0; const allS=[...IPA,...IPA2];
+    allS.forEach(s=>{
+      s.li.classList.remove('right','wrong');
+      if(s.sel.value==='') return;
+      if(+s.sel.value===s.a){ s.li.classList.add('right'); ok++; mark(s.id); } else s.li.classList.add('wrong');
+    });
+    document.getElementById('ipa-state').textContent=ok+' de '+allS.length;
+    const fb=document.getElementById('ipa-fb');
+    if(ok===allS.length){
+      document.getElementById('ipa-card').classList.add('done');
+      fb.className='fb show ok';
+      fb.innerHTML='Todo correcto. Las tres partes de la condición se gastan en tres aplicaciones del teorema de coincidencia; la sustitución sólo interviene para pasar de φ a '+m(S('x','y')+'φ')+'.';
+    }else{
+      fb.className='fb show no';
+      fb.innerHTML='Hay '+(allS.length-ok)+' sin acertar. Pista: coincidencia se usa cada vez que se cambia el valor de una variable que no está libre; sustitución, cuando aparece '+m(S('x','y')+'φ')+'.';
+    }
+  });
+}
+
+/* ---------- Bloque 4 ---------- */
+function buildModels(){
+  const box=document.getElementById('models');
+  TASKS.forEach((t,i)=>{
+    TOTAL++;
+    const M={n:2,P:new Set(),Q:new Set(),R:new Set()}; const env={x:0,y:0};
+    const c=el('div','card');
+    c.append(el('div','card-top','<span class="tag">Contramodelo '+(i+1)+' · '+t.title+'</span><span class="state">Pendiente</span>'));
+    c.append(el('p',null,'¿'+m(t.prem.map(p=>show(p)).join(', ')+' ⊨ '+show(t.concl))+'?'));
+    const grid=el('div','model'); const left=el('div','panel'); const right=el('div','panel');
+    left.append(el('h3',null,'Sistema'));
+    const ctl=el('div'); ctl.style.display='flex'; ctl.style.flexDirection='column'; ctl.style.gap='.5rem'; left.append(ctl);
+    right.append(el('h3',null,'Valores de verdad'));
+    const truth=el('ul','truth'); right.append(truth);
+    const fb=el('div','fb');
+    function drawCtl(){
+      ctl.innerHTML='';
+      const u=el('div','ctl','<span class="lbl">Universo</span>');
+      const sel=el('select'); sel.id=t.id+'-n'; sel.setAttribute('aria-label','Tamaño del universo');
+      [1,2,3].forEach(k=>sel.append(new Option('{'+[...Array(k).keys()].join(', ')+'}',k)));
+      sel.value=M.n;
+      sel.addEventListener('change',()=>{ M.n=+sel.value; ['P','Q'].forEach(p=>M[p]=new Set([...M[p]].filter(a=>a<M.n)));
+        M.R=new Set([...M.R].filter(s=>s.split(',').every(a=>+a<M.n))); ['x','y'].forEach(v=>{ if(env[v]>=M.n) env[v]=0; }); drawCtl(); drawTruth(); });
+      u.append(sel); ctl.append(u);
+      t.preds.filter(p=>p!=='R').forEach(p=>{
+        const r=el('div','ctl','<span class="lbl">'+p+' contiene</span>');
+        for(let a=0;a<M.n;a++){
+          const b=el('button','chip',String(a)); b.id=t.id+'-'+p+a; b.setAttribute('aria-pressed',M[p].has(a));
+          b.addEventListener('click',()=>{ M[p].has(a)?M[p].delete(a):M[p].add(a); b.setAttribute('aria-pressed',M[p].has(a)); drawTruth(); });
+          r.append(b);
+        }
+        ctl.append(r);
+      });
+      if(t.preds.includes('R')){
+        const r=el('div','ctl','<span class="lbl">R contiene ⟨fila, columna⟩</span>');
+        const tb=el('table','rel'); let h='<tr><th></th>'; for(let b=0;b<M.n;b++) h+='<th>'+b+'</th>'; h+='</tr>';
+        tb.innerHTML=h;
+        for(let a=0;a<M.n;a++){
+          const tr=el('tr',null,'<th>'+a+'</th>');
+          for(let b=0;b<M.n;b++){
+            const td=el('td'); const cb=el('input'); cb.type='checkbox'; cb.id=t.id+'-R'+a+b; cb.checked=M.R.has(a+','+b);
+            cb.setAttribute('aria-label','⟨'+a+', '+b+'⟩ en R');
+            cb.addEventListener('change',()=>{ cb.checked?M.R.add(a+','+b):M.R.delete(a+','+b); drawTruth(); });
+            td.append(cb); tr.append(td);
+          }
+          tb.append(tr);
+        }
+        r.append(tb); ctl.append(r);
+      }
+      t.vars.forEach(v=>{
+        const r=el('div','ctl','<span class="lbl">Valor de '+v+'</span>');
+        const s=el('select'); s.id=t.id+'-v'+v; s.setAttribute('aria-label','Valor de '+v);
+        for(let a=0;a<M.n;a++) s.append(new Option(a,a));
+        s.value=env[v]; s.addEventListener('change',()=>{ env[v]=+s.value; drawTruth(); });
+        r.append(s); ctl.append(r);
+      });
+    }
+    function drawTruth(){
+      truth.innerHTML='';
+      const line=(f,isC)=>{ const v=ev(f,M,env);
+        truth.append(el('li',isC?'concl':'', '<span>'+(isC?'Conclusión: ':'')+m(show(f))+'</span><span class="tv '+(v?'t':'f')+'">'+(v?'verdadera':'falsa')+'</span>')); };
+      t.prem.forEach(p=>line(p,false)); line(t.concl,true);
+    }
+    const succeed=()=>{ fb.className='fb show ok'; fb.innerHTML=t.done; c.classList.add('done'); c.querySelector('.state').textContent='Resuelto'; mark(t.id); };
+    const row=el('div','row');
+    const b1=el('button','primary','Comprobar contramodelo'); b1.id=t.id+'-check';
+    b1.addEventListener('click',()=>{
+      if(isCounter(t,M,env)) succeed();
+      else{ fb.className='fb show no';
+        const falsePrem=t.prem.some(p=>!ev(p,M,env));
+        fb.innerHTML=(falsePrem?'Alguna premisa es falsa en tu interpretación.':'Las premisas son verdaderas, pero la conclusión también lo es.')+' Un contramodelo necesita todas las premisas verdaderas y la conclusión falsa.'; }
+    });
+    const b2=el('button',null,'No existe contramodelo'); b2.id=t.id+'-none';
+    b2.addEventListener('click',()=>{
+      if(t.valid) succeed();
+      else{ fb.className='fb show no'; fb.innerHTML='Sí existe, y basta un universo pequeño. '+t.hint; }
+    });
+    const b3=el('button',null,'Pista'); b3.id=t.id+'-hint';
+    b3.addEventListener('click',()=>{ fb.className='fb show no'; fb.innerHTML=t.hint; });
+    row.append(b1,b2,b3);
+    grid.append(left,right); c.append(grid,row,fb); box.append(c);
+    drawCtl(); drawTruth();
+  });
+}
+/* ---------- Bloque 5 ---------- */
+const Sub=S('x','τ')+'φ', Sub2=S('x',"τ′")+'φ';
+const OTHERS=[
+ {name:'(NC) No contradicción',p:[['Γ ¬φ','ψ'],['Γ ¬φ','¬ψ']],c:['Γ','φ'],
+  intro:'Sea '+m('𝒜ℐ')+' modelo de Γ y supongamos que no satisface φ.',
+  steps:[
+   {t:'Entonces '+m('𝒜ℐ')+' satisface…',o:['¬φ, por la definición de satisfacción del negador','ψ, por la primera premisa','φ ∨ ¬φ, que no aporta nada'],a:0},
+   {t:'Así que '+m('𝒜ℐ')+' es modelo de Γ ∪ {¬φ} y, por las dos premisas, satisface…',o:['ψ o ¬ψ, una de las dos','ψ y también ¬ψ','φ'],a:1},
+   {t:'Eso es imposible porque…',o:['Γ es contradictorio','ninguna interpretación satisface una fórmula y su negación','ψ es lógicamente válida'],a:1}],
+  done:'Luego toda interpretación que es modelo de Γ satisface φ: '+m('Γ ⊨ φ')+'.'},
+ {name:'(IDA) Disyuntor en el antecedente',p:[['Γ φ','γ'],['Γ ψ','γ']],c:['Γ φ ∨ ψ','γ'],
+  intro:'Sea '+m('𝒜ℐ')+' modelo de Γ ∪ {φ ∨ ψ}.',
+  steps:[
+   {t:'Por la definición de satisfacción del disyuntor, '+m('𝒜ℐ')+' satisface…',o:['φ y ψ','φ o ψ, al menos una de las dos','ni φ ni ψ'],a:1},
+   {t:'Si satisface φ, entonces es modelo de Γ ∪ {φ} y satisface γ por…',o:['la primera premisa, Γ φ ⊨ γ','la segunda premisa, Γ ψ ⊨ γ','el teorema de sustitución'],a:0},
+   {t:'Si satisface ψ, ocurre lo mismo con la segunda premisa. La prueba es, por tanto…',o:['una reducción al absurdo','una distinción de casos que acaba en γ en ambos','una inducción sobre φ'],a:1}],
+  done:'En los dos casos '+m('𝒜ℐ')+' satisface γ: '+m('Γ φ ∨ ψ ⊨ γ')+'. Es el ejercicio 14 d) de II.2.8.'},
+ {name:'(IDC) Disyuntor en la conclusión',p:[['Γ','φ']],c:['Γ','φ ∨ ψ'],
+  intro:'Sea '+m('𝒜ℐ')+' modelo de Γ.',
+  steps:[
+   {t:m('𝒜ℐ')+' satisface φ por…',o:['la premisa, Γ ⊨ φ','la regla (IH)','el teorema de coincidencia'],a:0},
+   {t:'Y entonces satisface φ ∨ ψ, sea cual sea ψ, por…',o:['la regla (IDA)','la definición de satisfacción del disyuntor','el teorema de sustitución'],a:1}],
+  done:'La otra forma de la regla, con ψ ∨ φ, se justifica igual.'},
+ {name:'(IPC) Particularizador en la conclusión',p:[['Γ',Sub]],c:['Γ','∃x φ'],
+  intro:'Sea '+m('𝒜ℐ')+' modelo de Γ. Por la premisa, satisface '+m(Sub)+'.',
+  steps:[
+   {t:'De ahí pasamos a que '+m('𝒜'+I('x','𝒜ℐ(τ)'))+' satisface φ por…',o:['el teorema de coincidencia (II.4.1)','el teorema de sustitución (II.4.2)','la definición de satisfacción de ∃'],a:1},
+   {t:'El individuo que sirve de testigo para ∃x φ es…',o:['ℐ(x), el valor que la asignación daba a x','𝒜ℐ(τ), la denotación del término τ','cualquier individuo del universo'],a:1},
+   {t:'Con ese testigo, '+m('𝒜ℐ')+' satisface ∃x φ por…',o:['la definición de satisfacción de ∃','la regla (IPA)','el teorema de isomorfía'],a:0}],
+  done:'A diferencia de (IPA), aquí no hace falta ninguna condición sobre las variables: el testigo lo da el propio término.'},
+ {name:'(RI) Reflexividad de la identidad',p:[],c:['','τ = τ'],
+  intro:'Es una regla sin premisas: hay que ver que la secuencia es correcta por sí sola.',
+  steps:[
+   {t:'Lo que hay que demostrar es…',o:['⊨ τ = τ: toda interpretación satisface τ = τ','que τ = τ tiene al menos un modelo','Γ ⊢ τ = τ'],a:0},
+   {t:m('𝒜ℐ')+' satisface '+m('τ = τ')+' syss '+m('𝒜ℐ(τ) = 𝒜ℐ(τ)')+', y esto se cumple siempre porque…',o:['τ es un designador','el signo = se interpreta como la identidad genuina, que se da entre cada objeto y él mismo','lo afirma la regla (SI)'],a:1}],
+  done:'Por eso el libro incluye el igualador entre los signos lógicos: su interpretación está fijada de antemano (nota 1 de II.1.1).'},
+ {name:'(SI) Sustitución de iguales',p:[['Γ',Sub]],c:['Γ τ = τ′',Sub2],
+  intro:'Sea '+m('𝒜ℐ')+' modelo de Γ ∪ {τ = τ′}. Por la premisa, satisface '+m(Sub)+'.',
+  steps:[
+   {t:'Por el teorema de sustitución, esto equivale a que satisface φ la interpretación…',o:['𝒜ℐ, sin cambios','𝒜ℐ con x reasignada a 𝒜ℐ(τ)','𝒜ℐ con x reasignada a 𝒜ℐ(τ′)'],a:1},
+   {t:'Como '+m('𝒜ℐ')+' satisface '+m('τ = τ′')+', sabemos que…',o:['τ y τ′ son la misma fila de signos','𝒜ℐ(τ) = 𝒜ℐ(τ′): los dos términos denotan el mismo individuo','τ′ no tiene variables libres'],a:1},
+   {t:'Por tanto, las asignaciones variantes '+m(I('x','𝒜ℐ(τ)'))+' e '+m(I('x','𝒜ℐ(τ′)'))+' son…',o:['la misma asignación','distintas, pero coinciden en LBR(φ)','incomparables'],a:0},
+   {t:'Para volver de '+m('𝒜'+I('x','𝒜ℐ(τ′)'))+' satisface φ a '+m('𝒜ℐ')+' satisface '+m(Sub2)+' usamos…',o:['el teorema de coincidencia','otra vez el teorema de sustitución, en el otro sentido','la regla (RI)'],a:1}],
+  done:'El teorema de sustitución se usa dos veces, una en cada sentido, con la igualdad de denotaciones en medio.'}
+];
+function buildOthers(){
+  const box=document.getElementById('others');
+  OTHERS.forEach((it,i)=>{
+    const c=el('div','card');
+    c.append(el('div','card-top','<span class="tag">'+it.name+'</span><span class="state">0 de '+it.steps.length+'</span>'));
+    c.append(el('div','rule m',it.p.map(seq).join('')+'<span class="sep"></span>'+seq(it.c)));
+    c.append(el('p',null,it.intro));
+    const ol=el('ol','steps');
+    it.steps.forEach((s,j)=>{
+      TOTAL++;
+      const li=el('li'); li.append(el('div',null,s.t));
+      const sel=el('select'); sel.id='o'+i+'s'+j; sel.setAttribute('aria-label','Completa el paso');
+      sel.append(new Option('Elige…',''));
+      s.o.forEach((o,k)=>sel.append(new Option(o,k)));
+      li.append(sel); ol.append(li); s.sel=sel; s.li=li;
+    });
+    const fb=el('div','fb'); const row=el('div','row');
+    const b=el('button','primary','Comprobar'); b.id='o'+i+'check';
+    b.addEventListener('click',()=>{
+      let ok=0;
+      it.steps.forEach((s,j)=>{
+        s.li.classList.remove('right','wrong');
+        if(s.sel.value==='') return;
+        if(+s.sel.value===s.a){ s.li.classList.add('right'); ok++; mark('o'+i+'s'+j); } else s.li.classList.add('wrong');
+      });
+      c.querySelector('.state').textContent=ok+' de '+it.steps.length;
+      if(ok===it.steps.length){ c.classList.add('done'); fb.className='fb show ok'; fb.innerHTML=it.done; }
+      else{ fb.className='fb show no'; fb.innerHTML='Quedan '+(it.steps.length-ok)+' por acertar. Revisa los pasos marcados o sin elegir.'; }
+    });
+    row.append(b); c.append(ol,row,fb); box.append(c);
+  });
+}
+buildQuiz(); buildRules(); buildIPA(); buildModels(); buildOthers(); refresh();
+</script>
+</body>
+</html>

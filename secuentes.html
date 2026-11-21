@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Taller de secuentes</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231f3b63%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27serif%27%3E%E2%8A%A2%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="fuentes/fuentes.css">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>
+/* Disposición: cuaderno de deducciones. Lista de ejercicios a la izquierda; a la derecha la meta, la deducción numerada como en la hoja de reglas, y la línea nueva. */
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --ink:#18212d; --muted:#586475; --line:#d6dde7;
+  --accent:#1f3b63; --accent-ink:#ffffff; --accent-soft:#e4ebf5;
+  --ok:#17693f; --ok-soft:#e2f2e9; --err:#a63a1a; --err-soft:#fbe9e2;
+  --ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --math:"STIX Two Text","STIX Two Math","Cambria Math","Noto Sans Math","DejaVu Serif",serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#11161d; --surface:#19202a; --ink:#e7ecf3; --muted:#9ba8b8; --line:#2d3746;
+  --accent:#9dbdee; --accent-ink:#0f1620; --accent-soft:#213047;
+  --ok:#6fd09b; --ok-soft:#173326; --err:#f39a78; --err-soft:#3b211a; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#11161d; --surface:#19202a; --ink:#e7ecf3; --muted:#9ba8b8; --line:#2d3746;
+  --accent:#9dbdee; --accent-ink:#0f1620; --accent-soft:#213047;
+  --ok:#6fd09b; --ok-soft:#173326; --err:#f39a78; --err-soft:#3b211a; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+#pickbox{display:none}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--ui);padding-block:20px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:20px}
+header h1{font:600 26px/1.15 var(--ui);margin:0 0 4px;letter-spacing:-.01em;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:68ch}
+.cols{display:grid;grid-template-columns:250px minmax(0,1fr);gap:20px;align-items:start}
+nav{display:grid;gap:14px}
+nav h2{font:600 11px/1.3 var(--ui);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+nav ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+nav button{width:100%;text-align:left;background:none;border:0;border-radius:6px;padding:6px 8px;color:var(--ink);cursor:pointer;
+  font:15px/1.35 var(--math);display:flex;gap:8px;align-items:baseline}
+nav button:hover{background:var(--accent-soft)}
+nav button[aria-current="true"]{background:var(--accent);color:var(--accent-ink)}
+nav .st{font:600 12px var(--ui);width:14px;flex:none;color:var(--ok)}
+nav button[aria-current="true"] .st{color:inherit}
+nav .free{font-family:var(--ui)}
+main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0}
+.panel,form.new,.row>*{min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.goal{display:grid;gap:8px}
+.eyebrow{font:600 11px/1.3 var(--ui);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.goal .seq{font:400 23px/1.3 var(--math);overflow-x:auto}
+.goal .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:500 12px/1 var(--ui);padding:5px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font:500 14px var(--ui);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.hint{margin:0;color:var(--muted);max-width:68ch}
+#freegoal{display:flex;gap:8px;flex-wrap:wrap}
+.tablebox{overflow-x:auto}
+table.ded{border-collapse:collapse;width:100%;font:17px/1.4 var(--math)}
+table.ded th{font:600 11px/1.3 var(--ui);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 10px 6px 0;white-space:nowrap}
+table.ded td{padding:7px 10px 7px 0;border-top:1px solid var(--line);vertical-align:baseline}
+table.ded td.n{font:500 13px var(--ui);color:var(--muted);font-variant-numeric:tabular-nums;width:1%;white-space:nowrap}
+table.ded td.n button{background:none;border:1px solid var(--line);border-radius:5px;min-width:28px;padding:2px 6px;color:var(--ink);font:inherit;cursor:pointer}
+table.ded td.n button:hover{border-color:var(--accent);color:var(--accent)}
+table.ded td.a{text-align:right;white-space:nowrap}
+table.ded td.t{width:1%;color:var(--muted)}
+table.ded td.c{white-space:nowrap}
+table.ded td.r{font:500 13px var(--ui);white-space:nowrap}
+table.ded td.r small{display:block;font:400 12px var(--ui);color:var(--muted);white-space:normal;max-width:30ch}
+table.ded td.u{width:1%}
+table.ded tr.goalrow td{background:var(--ok-soft)}
+.icon{background:none;border:0;color:var(--muted);cursor:pointer;font:13px var(--ui);padding:2px 4px;border-radius:4px}
+.icon:hover{color:var(--accent);background:var(--accent-soft)}
+.empty{color:var(--muted);margin:4px 0 0}
+form.new{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 150px 110px auto;gap:8px;align-items:end}
+label{display:grid;gap:4px;font:500 12px var(--ui);color:var(--muted)}
+input,select{font:17px/1.3 var(--math);padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+select,#refs{font:15px/1.3 var(--ui);height:40px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{font:600 14px var(--ui);padding:0 16px;height:40px;border-radius:7px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer;white-space:nowrap}
+.btn.ghost{background:none;color:var(--accent)}
+.pal{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pal button{font:18px/1 var(--math);min-width:36px;height:34px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);cursor:pointer}
+.pal button:hover{border-color:var(--accent);color:var(--accent)}
+.pal span{font:12px var(--ui);color:var(--muted);margin-left:4px}
+.pal code{font:12px ui-monospace,Menlo,Consolas,monospace;background:var(--accent-soft);color:var(--accent);padding:1px 4px;border-radius:3px}
+#preview{font:15px/1.4 var(--math);color:var(--muted);min-height:1.4em;overflow-x:auto;white-space:nowrap}
+#preview.bad{font-family:var(--ui);font-size:13px;color:var(--err);white-space:normal}
+#msg,#emsg{border-radius:8px;padding:10px 12px;font:14px/1.45 var(--ui)}
+#emsg{margin-top:10px;white-space:pre-line} #emsg.ok{background:var(--ok-soft);color:var(--ok)} #emsg.err{background:var(--err-soft);color:var(--err)}
+#given{margin:0 0 8px;color:var(--muted);font-size:14px} #given .m{font-family:var(--math);font-size:17px;color:var(--ink)}
+#raw{color:var(--muted)}
+#msg.ok{background:var(--ok-soft);color:var(--ok)} #msg.err{background:var(--err-soft);color:var(--err)}
+#msg.done{background:var(--ok-soft);color:var(--ok);font-weight:600}
+.actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 18px}
+details summary{cursor:pointer;font:600 14px var(--ui);padding:12px 0;color:var(--accent)}
+details[open]{padding-bottom:14px}
+.rgroup{font:600 11px var(--ui);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.rule{border:1px solid var(--line);border-radius:8px;padding:10px 12px 12px;display:grid;gap:8px;align-content:start;background:var(--bg)}
+.rule .rh{display:flex;gap:8px;align-items:baseline;font:13px/1.3 var(--ui);color:var(--muted)}
+.rule .rh b{font:600 14px var(--ui);color:var(--accent);white-space:nowrap}
+.rule .fr{display:inline-grid;justify-self:center;justify-items:center;font:17px/1.5 var(--math);min-width:60%}
+.rule .fr .pr{display:flex;gap:6px 26px;flex-wrap:wrap;justify-content:center;padding:0 10px 3px;min-height:1.5em}
+.rule .fr .cn{border-top:1.5px solid var(--ink);padding:3px 10px 0;justify-self:stretch;text-align:center}
+.rule .fr span.q{white-space:nowrap}
+.rule i{font-style:italic}
+.rule .cd{font:13px/1.4 var(--ui);color:var(--muted);text-align:center;margin:0}
+.rule .cd .q{font:15px var(--math);color:var(--ink)}
+.Ss{display:inline-flex;align-items:center;white-space:nowrap}
+.Ss b{font-weight:600;font-style:normal}
+.Ss .ix{display:inline-flex;flex-direction:column;font-size:.68em;line-height:1.05;margin:0 .12em 0 .06em;text-align:left}
+footer.credit{border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font:14px/1.5 var(--ui);text-align:center}
+footer.credit b{color:var(--ink);font-weight:600}
+footer.credit a,.back{color:var(--accent)}
+.back{display:inline-block;margin-bottom:8px;font:14px var(--ui);text-decoration:none}
+.back:hover{text-decoration:underline}
+header .by{margin-top:6px;font-size:14px}
+.help p{margin:0 0 8px;max-width:72ch} .help .m{font-family:var(--math);font-size:16px}
+@media (max-width:820px){
+  .cols{grid-template-columns:minmax(0,1fr)}
+  nav{display:none} #pickbox{display:grid}
+  .row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} .row label.s{grid-column:1/-1}
+  .goal .seq{font-size:20px} table.ded{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="back" href="./">← Todas las prácticas</a>
+  <h1>Taller de secuentes</h1>
+  <p>Construye cada deducción línea a línea con las reglas del cálculo de Manzano. La página comprueba cada aplicación, incluida la condición de las variables en (IPA) e (IGC), y te dice qué falla. Los bloques E y F son los talleres de la práctica 5.</p>
+  <p class="by">Una aplicación de Manuel Crescencio Moreno Gómez, dedicada a los lógicos matemáticos de la Universidad de Córdoba.</p>
+</header>
+<div class="cols">
+<nav id="nav" aria-label="Ejercicios"></nav>
+<main>
+  <label id="pickbox">Ejercicio<select id="pick" style="font-family:var(--math);font-size:16px"></select></label>
+  <section class="panel goal" aria-labelledby="gl">
+    <div class="meta"><span class="eyebrow" id="gl">Meta</span><span class="chip" id="mode"></span><span class="chip ok" id="solved" hidden>Resuelto</span></div>
+    <p id="given" hidden></p>
+    <div class="seq" id="goal"></div>
+    <div id="freegoal" hidden><label style="flex:1;min-width:200px">Tu meta (opcional)<input id="fg" autocomplete="off" spellcheck="false" placeholder="∀x Px ⊢ Pa"></label></div>
+    <div class="actions"><button class="linkbtn" id="bhint" type="button">Ver una pista</button><button class="linkbtn" id="bsol" type="button">Ver una solución</button></div>
+    <p class="hint" id="hint" hidden></p>
+    <div class="tablebox" id="sol" hidden></div>
+  </section>
+  <section class="panel" aria-labelledby="dl">
+    <div class="eyebrow" id="dl" style="margin-bottom:8px">Tu deducción</div>
+    <div class="tablebox"><table class="ded" id="ded"></table></div>
+    <div id="emsg" role="status" aria-live="polite" hidden></div>
+    <p class="empty" id="empty">Todavía no hay líneas. Casi todas las deducciones empiezan con (IH).</p>
+  </section>
+  <section class="panel" id="formpanel">
+    <form class="new" id="form" autocomplete="off">
+      <div class="row">
+        <label class="s">Línea nueva: antecedente ⊢ conclusión<input id="seq" spellcheck="false" autocapitalize="off" placeholder="Pa, ¬Pa ⊢ Qa"></label>
+        <label>Regla<select id="rule"></select></label>
+        <label>Líneas que usa<input id="refs" inputmode="numeric" placeholder="—"></label>
+        <button class="btn" type="submit">Añadir</button>
+      </div>
+      <div id="preview" aria-live="polite"></div>
+      <div class="pal" id="pal"></div>
+      <div id="msg" role="status" aria-live="polite" hidden></div>
+      <div class="actions"><button class="linkbtn" id="undo" type="button">Quitar la última línea</button><button class="linkbtn" id="clear" type="button">Empezar de nuevo</button></div>
+    </form>
+  </section>
+  <details open><summary>Las reglas</summary><div id="rules"></div></details>
+  <details class="help"><summary>Cómo se escribe</summary>
+    <p>Las fórmulas se escriben como en clase, en notación prefija: <span class="m">Px</span>, <span class="m">Rxy</span>, <span class="m">a=b</span>. Relatores: cualquier mayúscula salvo A y E. Variables: <span class="m">x y z u v w</span>. Constantes: <span class="m">a b c d e</span>. Functores de un argumento: <span class="m">f g h</span> (por ejemplo <span class="m">Pfa</span>).</p>
+    <p>El antecedente va separado por comas y puede estar vacío: <span class="m">⊢ a=a</span>. El orden y las repeticiones del antecedente no importan.</p>
+    <p>Un cuantificador afecta solo a lo que tiene inmediatamente detrás: <span class="m">∃x Px ∨ Qx</span> es <span class="m">(∃x Px) ∨ Qx</span>. Para un alcance mayor, usa paréntesis: <span class="m">∃x (Px ∨ Qx)</span>.</p>
+    <p>Las abreviaturas cuentan como lo que abrevian: <span class="m">φ → ψ</span> es <span class="m">¬φ ∨ ψ</span>, <span class="m">φ ∧ ψ</span> es <span class="m">¬(¬φ ∨ ¬ψ)</span> y <span class="m">∀x φ</span> es <span class="m">¬∃x ¬φ</span>. Por eso (IDA) sirve con un condicional en el antecedente.</p>
+    <p>No hace falta ninguna regla para pasar de una conectiva definida a su definición: una línea con <span class="m">Pa → Qa</span> y la misma línea con <span class="m">¬Pa ∨ Qa</span> son para la página la misma línea, y puedes escribirla de la forma que te convenga cada vez. Bajo la casilla se ve la fórmula sin abreviaturas.</p>
+    <p>En el bloque E se justifican reglas: <span class="m">Γ</span>, <span class="m">φ</span> y <span class="m">ψ</span> son letras esquemáticas (están en los botones), y las líneas dadas en el enunciado se escriben con la regla (Pr). En cada ejercicio valen las primitivas y las derivadas que indica la etiqueta.</p>
+    <p>En el bloque A solo se admiten las diez reglas primitivas. La página guarda tus deducciones en este navegador.</p>
+  </details>
+</main>
+</div>
+<footer class="credit">Aplicación creada por <b>Manuel Crescencio Moreno Gómez</b> y dedicada a los lógicos matemáticos de la Universidad de Córdoba.<br>Lógica · 2.º del grado en Matemáticas y Filosofía · Cálculo secuencial de M. Manzano, <i>Teoría de modelos</i>, cap. III. · Licencia <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">CC BY-SA 4.0</a>.</footer>
+</div>
+<script>
+// ---------- Núcleo lógico: análisis de fórmulas y comprobación de reglas ----------
+const VARS='xyzuvw', CONS='abcde', FNS='fgh';
+function tokenize(s){
+  const out=[]; let i=0;
+  const two={'->':'→','|-':'⊢','!=':'≠'}, one={'~':'¬','|':'∨','&':'∧','E':'∃','A':'∀'};
+  while(i<s.length){
+    const c=s[i];
+    if(/\s/.test(c)){i++;continue;}
+    if(s.startsWith('<->',i)){out.push('↔');i+=3;continue;}
+    if(two[s.substr(i,2)]){out.push(two[s.substr(i,2)]);i+=2;continue;}
+    if(one[c]){out.push(one[c]);i++;continue;}
+    if('¬∨∧→↔∃∀=≠(),⊢'.includes(c)){out.push(c);i++;continue;}
+    if(/[a-z]/.test(c)){let j=i+1;while(j<s.length&&/[0-9']/.test(s[j]))j++;out.push({id:s.slice(i,j)});i=j;continue;}
+    if(/[B-DF-Z]/.test(c)){out.push({rel:c});i++;continue;}
+    if('φψχΓ'.includes(c)){out.push({rel:c,sch:true});i++;continue;}
+    throw new Error('No entiendo el símbolo «'+c+'».');
+  }
+  return out;
+}
+const N=a=>({t:'not',a}), O=(a,b)=>({t:'or',a,b}), X=(v,a)=>({t:'ex',v,a});
+const sg=(f,s)=>(f.s=s,f);
+const AND=(a,b)=>sg(N(O(N(a),N(b))),['∧',a,b]), IMP=(a,b)=>sg(O(N(a),b),['→',a,b]), ALL=(v,a)=>sg(N(X(v,N(a))),['∀',v,a]);
+function parser(toks){
+  let p=0; const peek=()=>toks[p], next=()=>toks[p++];
+  const isId=t=>t&&typeof t==='object'&&t.id!==undefined;
+  function term(){
+    const t=next(); if(!isId(t)) throw new Error('Esperaba un término (una variable o una constante).');
+    const h=t.id[0];
+    if(FNS.includes(h)) return {t:'fn',n:t.id,a:term()};
+    if(VARS.includes(h)) return {t:'var',n:t.id};
+    if(CONS.includes(h)) return {t:'con',n:t.id};
+    throw new Error('«'+t.id+'» no es una variable ('+VARS.split('').join(', ')+') ni una constante ('+CONS.split('').join(', ')+') ni un functor ('+FNS.split('').join(', ')+').');
+  }
+  function atom(){
+    const t=peek();
+    if(t&&t.rel){next(); const args=[]; while(!t.sch&&isId(peek())) args.push(term()); return {t:'rel',n:t.rel,args};}
+    if(isId(t)){const l=term(); const o=next();
+      if(o==='=') return {t:'eq',l,r:term()};
+      if(o==='≠'){const e={t:'eq',l,r:term()}; return sg(N(e),['≠',e.l,e.r]);}
+      throw new Error('Después de un término esperaba «=».');}
+    throw new Error(t===undefined?'La fórmula está incompleta.':'No esperaba «'+(typeof t==='string'?t:(t.id||t.rel))+'» aquí.');
+  }
+  function un(){
+    const t=peek();
+    if(t==='¬'){next();return N(un());}
+    if(t==='∃'||t==='∀'){next(); const vs=[];
+      while(isId(peek())&&VARS.includes(peek().id[0])&&toks[p+1]!=='='&&toks[p+1]!=='≠') vs.push(next().id);
+      if(!vs.length) throw new Error('Después de '+t+' tiene que venir una variable.');
+      let b=un(); for(let i=vs.length-1;i>=0;i--) b=t==='∃'?X(vs[i],b):ALL(vs[i],b); return b;}
+    if(t==='('){next(); const f=iff(); if(next()!==')') throw new Error('Falta cerrar un paréntesis.'); return f;}
+    return atom();
+  }
+  function con(){let a=un(); while(peek()==='∧'){next();a=AND(a,un());} return a;}
+  function dis(){let a=con(); while(peek()==='∨'){next();a=O(a,con());} return a;}
+  function imp(){const a=dis(); if(peek()==='→'){next();return IMP(a,imp());} return a;}
+  function iff(){const a=imp(); if(peek()==='↔'){next();const b=imp();return sg(AND(IMP(a,b),IMP(b,a)),['↔',a,b]);} return a;}
+  return {iff,peek,next,done:()=>p>=toks.length};
+}
+function parseFormula(s){const P=parser(tokenize(s)); const f=P.iff(); if(!P.done()) throw new Error('Sobra algo al final de la fórmula «'+s.trim()+'».'); return f;}
+function parseSequent(s){
+  const toks=tokenize(s); const k=toks.indexOf('⊢');
+  if(k<0) throw new Error('Falta el símbolo ⊢ entre el antecedente y la conclusión.');
+  if(toks.indexOf('⊢',k+1)>=0) throw new Error('Solo puede haber un ⊢ en cada línea.');
+  const G=[]; let cur=[]; let depth=0;
+  for(const t of toks.slice(0,k)){ if(t==='(')depth++; if(t===')')depth--; if(t===','&&depth===0){G.push(cur);cur=[];} else cur.push(t);}
+  if(cur.length) G.push(cur); else if(G.length) throw new Error('Hay una coma de más en el antecedente.');
+  const one=ts=>{const P=parser(ts); const f=P.iff(); if(!P.done()) throw new Error('Sobra algo en una fórmula. Separa las fórmulas del antecedente con comas.'); return f;};
+  const rhs=toks.slice(k+1); if(!rhs.length) throw new Error('Falta la conclusión, a la derecha de ⊢.');
+  return mk(G.map(one),one(rhs));
+}
+function mk(G,c){const seen=new Set(),GG=[]; for(const f of G){const k=key(f); if(!seen.has(k)){seen.add(k);GG.push(f);}} return {G:GG,Gk:seen,c,ck:key(c)};}
+function key(f){switch(f.t){
+  case 'var':case 'con':return f.n; case 'fn':return f.n+'('+key(f.a)+')';
+  case 'rel':return f.n+'['+f.args.map(key).join(',')+']'; case 'eq':return '('+key(f.l)+'='+key(f.r)+')';
+  case 'not':return '¬'+key(f.a); case 'or':return '('+key(f.a)+'∨'+key(f.b)+')'; case 'ex':return '∃'+f.v+'.'+key(f.a);}}
+// escritura legible, recuperando las abreviaturas
+function show(f,top=true,raw=false){
+  const tm=t=>t.t==='fn'?t.n+tm(t.a):t.n;
+  const par=(s,b)=>b?'('+s+')':s;
+  function go(f,ctx){ // ctx: 0 libre, 1 dentro de un conector binario, 3 bajo ¬ o cuantificador
+    if(f.s&&!raw){const [op,a,b]=f.s;
+      if(op==='∀') return '∀'+a+' '+go(b,3);
+      if(op==='≠') return tm(a)+'≠'+tm(b);
+      return par(go(a,1)+' '+op+' '+go(b,1),ctx>=1);}
+    if(f.t==='rel') return f.n+f.args.map(tm).join('');
+    if(f.t==='eq') return tm(f.l)+'='+tm(f.r);
+    if(f.t==='ex') return '∃'+f.v+' '+go(f.a,3);
+    if(f.t==='not') return '¬'+go(f.a,3);
+    if(f.t==='or') return par(go(f.a,1)+' ∨ '+go(f.b,1),ctx>=1);
+  }
+  return go(f,0);
+}
+const showSeq=(L,raw)=>(L.G.length?L.G.map(f=>show(f,true,raw)).join(', ')+' ':'')+'⊢ '+show(L.c,true,raw);
+function tvars(t,s=new Set()){if(t.t==='var')s.add(t.n); else if(t.t==='fn')tvars(t.a,s); return s;}
+function free(f,bound=[],s=new Set()){
+  switch(f.t){case 'rel':f.args.forEach(a=>tvars(a).forEach(v=>{if(!bound.includes(v))s.add(v)}));break;
+    case 'eq':[f.l,f.r].forEach(a=>tvars(a).forEach(v=>{if(!bound.includes(v))s.add(v)}));break;
+    case 'not':free(f.a,bound,s);break; case 'or':free(f.a,bound,s);free(f.b,bound,s);break;
+    case 'ex':free(f.a,bound.concat(f.v),s);break;} return s;}
+const freeAll=fs=>{const s=new Set(); fs.forEach(f=>free(f,[],s)); return s;};
+// ¿objetivo = S^τ_x cuerpo para algún τ? Devuelve {ok,tau} (tau indefinido si x no está libre en cuerpo)
+function matchSubst(body,target,x){
+  let tau, cap=false;
+  function mt(b,t,bound){
+    if(b.t==='var'&&b.n===x&&!bound.includes(x)){
+      if(tau===undefined){tau=t;} else if(key(tau)!==key(t)) return false;
+      if([...tvars(t)].some(v=>bound.includes(v))) cap=true; return true;}
+    if(b.t!==t.t) return false;
+    if(b.t==='fn') return b.n===t.n&&mt(b.a,t.a,bound);
+    return b.n===t.n;}
+  function m(b,t,bound){
+    if(b.t!==t.t) return false;
+    switch(b.t){case 'rel':return b.n===t.n&&b.args.length===t.args.length&&b.args.every((a,i)=>mt(a,t.args[i],bound));
+      case 'eq':return mt(b.l,t.l,bound)&&mt(b.r,t.r,bound); case 'not':return m(b.a,t.a,bound);
+      case 'or':return m(b.a,t.a,bound)&&m(b.b,t.b,bound); case 'ex':return b.v===t.v&&m(b.a,t.a,bound.concat(b.v));}}
+  const ok=m(body,target,[]);
+  return {ok:ok&&!cap,tau,cap:ok&&cap};
+}
+// ¿q sale de p cambiando algunas apariciones (libres) del término t por t2?
+function replSome(p,q,t,t2){
+  const tk=key(t),t2k=key(t2), vs=new Set([...tvars(t),...tvars(t2)]);
+  function mt(a,b,bound){
+    if(key(a)===key(b)) return true;
+    if(key(a)===tk&&key(b)===t2k&&![...vs].some(v=>bound.includes(v))) return true;
+    return a.t==='fn'&&b.t==='fn'&&a.n===b.n&&mt(a.a,b.a,bound);}
+  function m(a,b,bound){
+    if(a.t!==b.t) return false;
+    switch(a.t){case 'rel':return a.n===b.n&&a.args.length===b.args.length&&a.args.every((x,i)=>mt(x,b.args[i],bound));
+      case 'eq':return mt(a.l,b.l,bound)&&mt(a.r,b.r,bound); case 'not':return m(a.a,b.a,bound);
+      case 'or':return m(a.a,b.a,bound)&&m(a.b,b.b,bound); case 'ex':return a.v===b.v&&m(a.a,b.a,bound.concat(a.v));}}
+  return m(p,q,[]);
+}
+const sub=(A,B)=>[...A].every(k=>B.has(k)), seteq=(A,B)=>A.size===B.size&&sub(A,B);
+const plus=(A,k)=>new Set([...A,k]), minus=(A,k)=>{const s=new Set(A);s.delete(k);return s;};
+// premisa «Γ, extra ⊢ …» frente a Γ (conjunto de claves R)
+const ext=(p,R,k)=>sub(R,plus(p.Gk,k))&&sub(p.Gk,plus(R,k));
+const isNeg=(a,b)=>key(a)===key(N(b))||key(b)===key(N(a)); // una es la negación de la otra
+const no=msg=>({ok:false,msg}), yes=(note)=>({ok:true,note});
+const ANT='Los antecedentes no cuadran con la regla. Si hace falta, iguálalos antes con (M).';
+const isAll=f=>f.t==='not'&&f.a.t==='ex'&&f.a.a.t==='not', isAnd=f=>f.t==='not'&&f.a.t==='or'&&f.a.a.t==='not'&&f.a.b.t==='not', isImp=f=>f.t==='or'&&f.a.t==='not';
+let GIVEN=[]; const setGiven=a=>{GIVEN=a;};
+const same=(A,B)=>A.ck===B.ck&&seteq(A.Gk,B.Gk);
+const RULES={
+ IH:{n:0,prim:true,name:'Introducción de hipótesis',form:'Γ ⊢ φ, si φ está en Γ',
+  chk:(L)=>L.Gk.has(L.ck)?yes():no('La conclusión «'+show(L.c)+'» no está en el antecedente.')},
+ M:{n:1,prim:true,name:'Monotonía',form:'de Γ ⊢ φ a Γ′ ⊢ φ, si Γ ⊆ Γ′',
+  chk:(L,[p])=>p.ck!==L.ck?no('(M) no cambia la conclusión.'):sub(p.Gk,L.Gk)?yes():no('(M) solo añade fórmulas al antecedente: no puede quitar ninguna.')},
+ PC:{n:2,prim:true,name:'Prueba por casos',form:'de Γ,ψ ⊢ φ y Γ,¬ψ ⊢ φ a Γ ⊢ φ',
+  chk:(L,[p,q])=>{ if(p.ck!==L.ck||q.ck!==L.ck) return no('Las dos líneas y la nueva deben tener la misma conclusión.');
+   for(const [a,b] of [[p,q],[q,p]]) for(const f of a.G){const nk=key(N(f)); if(b.Gk.has(nk)&&ext(a,L.Gk,key(f))&&ext(b,L.Gk,nk)) return yes();}
+   return no('No encuentro los dos casos: una línea debe tener ψ en el antecedente y la otra ¬ψ, y el resto (Γ) debe ser el antecedente nuevo.');}},
+ NC:{n:2,prim:true,name:'No contradicción',form:'de Γ,¬φ ⊢ ψ y Γ,¬φ ⊢ ¬ψ a Γ ⊢ φ',
+  chk:(L,[p,q])=>{const nk=key(N(L.c));
+   if(!p.Gk.has(nk)||!q.Gk.has(nk)) return no('Las dos líneas deben tener «'+show(N(L.c))+'» en el antecedente (la negación de lo que quieres concluir).');
+   if(!ext(p,L.Gk,nk)||!ext(q,L.Gk,nk)) return no(ANT);
+   return key(q.c)===key(N(p.c))||key(p.c)===key(N(q.c))?yes():no('Las conclusiones de las dos líneas deben ser una fórmula y su negación.');}},
+ IDC:{n:1,prim:true,name:'Introducción del disyuntor en el consecuente',form:'de Γ ⊢ φ a Γ ⊢ φ∨ψ (o Γ ⊢ ψ∨φ)',
+  chk:(L,[p])=>{ if(L.c.t!=='or') return no('La conclusión nueva debe ser una disyunción.');
+   if(!seteq(p.Gk,L.Gk)) return no('(IDC) no cambia el antecedente.');
+   return p.ck===key(L.c.a)||p.ck===key(L.c.b)?yes():no('La conclusión de la línea citada debe ser uno de los dos disyuntos.');}},
+ IDA:{n:2,prim:true,name:'Introducción del disyuntor en el antecedente',form:'de Γ,φ ⊢ χ y Γ,ψ ⊢ χ a Γ,φ∨ψ ⊢ χ',
+  chk:(L,[p,q])=>{ if(p.ck!==L.ck||q.ck!==L.ck) return no('Las dos líneas y la nueva deben tener la misma conclusión.');
+   const ds=L.G.filter(f=>f.t==='or'); if(!ds.length) return no('En el antecedente nuevo tiene que haber una disyunción.');
+   for(const d of ds){const R=minus(L.Gk,key(d)); for(const [a,b] of [[p,q],[q,p]]){
+     const ka=key(d.a),kb=key(d.b); if(a.Gk.has(ka)&&b.Gk.has(kb)&&ext(a,R,ka)&&ext(b,R,kb)) return yes();}}
+   return no('Una línea debe tener en el antecedente el primer disyunto y la otra el segundo, con el mismo resto Γ.');}},
+ IPC:{n:1,prim:true,name:'Introducción del particularizador en el consecuente',form:'de Γ ⊢ S^τ_x φ a Γ ⊢ ∃xφ',
+  chk:(L,[p])=>{ if(L.c.t!=='ex') return no('La conclusión nueva debe empezar por ∃.');
+   if(!seteq(p.Gk,L.Gk)) return no('(IPC) no cambia el antecedente.');
+   const m=matchSubst(L.c.a,p.c,L.c.v);
+   if(m.cap) return no('Ese término no se puede sustituir ahí: una de sus variables quedaría ligada.');
+   return m.ok?yes(m.tau?'τ = '+showT(m.tau):''):no('La conclusión citada no es «'+show(L.c.a)+'» con un mismo término en todos los lugares de '+L.c.v+'.');}},
+ IPA:{n:1,prim:true,name:'Introducción del particularizador en el antecedente',form:'de Γ,S^y_x φ ⊢ ψ a Γ,∃xφ ⊢ ψ, si y no está libre en Γ, ∃xφ, ψ',
+  chk:(L,[p])=>{ if(p.ck!==L.ck) return no('(IPA) no cambia la conclusión.');
+   const es=L.G.filter(f=>f.t==='ex'); if(!es.length) return no('En el antecedente nuevo tiene que haber una fórmula que empiece por ∃.');
+   let why='No encuentro en la línea citada la fórmula sin el ∃ (con una variable y en lugar de la variable cuantificada).';
+   for(const e of es){const R=minus(L.Gk,key(e)); for(const th of p.G){
+     const m=matchSubst(e.a,th,e.v); if(!m.ok||!ext(p,R,key(th))) continue;
+     if(m.tau===undefined) return yes();
+     if(m.tau.t!=='var'){why='En (IPA) lo que sustituye a '+e.v+' tiene que ser una variable, no «'+showT(m.tau)+'».';continue;}
+     const y=m.tau.n, rest=L.G.filter(f=>key(f)!==key(e));
+     if(freeAll(rest).has(y)){why='No se cumple la condición: '+y+' está libre en el resto del antecedente (Γ).';continue;}
+     if(free(e).has(y)){why='No se cumple la condición: '+y+' está libre en «'+show(e)+'».';continue;}
+     if(free(L.c).has(y)){why='No se cumple la condición: '+y+' está libre en la conclusión «'+show(L.c)+'».';continue;}
+     return yes('y = '+y+': no está libre en Γ, ni en '+show(e)+', ni en la conclusión');}}
+   return no(why);}},
+ RI:{n:0,prim:true,name:'Reflexividad de la igualdad',form:'⊢ τ=τ',
+  chk:(L)=>L.c.t!=='eq'||key(L.c.l)!==key(L.c.r)?no('La conclusión debe ser de la forma τ=τ.'):L.G.length?no('(RI) se escribe sin antecedente. Si lo necesitas, añádelo después con (M).'):yes()},
+ SI:{n:1,prim:true,name:'Sustitución de iguales',form:'de Γ ⊢ S^τ_x φ a Γ,τ=τ′ ⊢ S^τ′_x φ',
+  chk:(L,[p])=>{const es=L.G.filter(f=>f.t==='eq'); if(!es.length) return no('En el antecedente nuevo tiene que haber una igualdad τ=τ′.');
+   for(const e of es){ if(sub(p.Gk,L.Gk)&&sub(L.Gk,plus(p.Gk,key(e)))&&replSome(p.c,L.c,e.l,e.r)) return yes('con '+showT(e.l)+'='+showT(e.r)); }
+   return no('La conclusión nueva debe salir de la citada cambiando τ por τ′, donde τ=τ′ es la igualdad del antecedente (en ese orden).');}},
+ Pr:{n:0,given:true,name:'Premisa de la regla que se justifica',form:'una de las líneas dadas en el enunciado',
+  chk:(L)=>GIVEN.some(g=>same(g,L))?yes():no('Esa línea no es ninguna de las premisas dadas en el enunciado.')},
+ SNC:{n:2,name:'Segunda regla de no contradicción',form:'de Γ ⊢ ψ y Γ ⊢ ¬ψ a Γ ⊢ φ',
+  chk:(L,[p,q])=>!seteq(p.Gk,L.Gk)||!seteq(q.Gk,L.Gk)?no(ANT):key(q.c)===key(N(p.c))||key(p.c)===key(N(q.c))?yes():no('Las conclusiones de las dos líneas deben ser una fórmula y su negación.')},
+ T:{n:2,name:'Corte (transitividad)',form:'de Γ ⊢ φ y Γ,φ ⊢ ψ a Γ ⊢ ψ',
+  chk:(L,[p,q])=>{for(const [a,b] of [[p,q],[q,p]]) if(seteq(a.Gk,L.Gk)&&b.ck===L.ck&&ext(b,L.Gk,a.ck)) return yes();
+   return no('Una línea debe ser Γ ⊢ φ y la otra Γ,φ ⊢ ψ, con ψ la conclusión nueva.');}},
+ MP:{n:2,name:'Modus ponens',form:'de Γ ⊢ φ→ψ y Γ ⊢ φ a Γ ⊢ ψ',
+  chk:(L,[p,q])=>{ if(!seteq(p.Gk,L.Gk)||!seteq(q.Gk,L.Gk)) return no(ANT);
+   for(const [a,b] of [[p,q],[q,p]]) if(isImp(a.c)&&key(a.c.a.a)===b.ck&&key(a.c.b)===L.ck) return yes();
+   return no('Una línea debe concluir un condicional φ→ψ, la otra su antecedente φ, y la nueva ψ.');}},
+ TD:{n:1,name:'Teorema de la deducción',form:'de Γ,φ ⊢ ψ a Γ ⊢ φ→ψ',
+  chk:(L,[p])=>!isImp(L.c)?no('La conclusión nueva debe ser un condicional.'):key(L.c.b)!==p.ck?no('El consecuente del condicional debe ser la conclusión de la línea citada.'):ext(p,L.Gk,key(L.c.a.a))?yes():no(ANT)},
+ DN:{n:1,name:'Doble negación',form:'de Γ ⊢ ¬¬φ a Γ ⊢ φ, y al revés',
+  chk:(L,[p])=>!seteq(p.Gk,L.Gk)?no('(DN) no cambia el antecedente.'):p.ck===key(N(N(L.c)))||L.ck===key(N(N(p.c)))?yes():no('Las conclusiones deben diferir exactamente en dos negaciones.')},
+ Cp:{n:1,name:'Contraposición',form:'de Γ,φ ⊢ ψ a Γ,¬ψ ⊢ ¬φ (cuatro formas)',
+  chk:(L,[p])=>{for(const al of p.G) for(const be of L.G){ if(seteq(minus(p.Gk,key(al)),minus(L.Gk,key(be)))&&isNeg(be,p.c)&&isNeg(L.c,al)) return yes(); }
+   return no('La fórmula que pasa al antecedente debe ser la negación de la conclusión citada, y la conclusión nueva la negación de la fórmula que sale del antecedente.');}},
+ MT:{n:2,name:'Modus tollens',form:'de Γ ⊢ φ→ψ y Γ ⊢ ¬ψ a Γ ⊢ ¬φ',
+  chk:(L,[p,q])=>{ if(!seteq(p.Gk,L.Gk)||!seteq(q.Gk,L.Gk)) return no(ANT);
+   for(const [a,b] of [[p,q],[q,p]]) if(isImp(a.c)&&b.ck===key(N(a.c.b))&&L.ck===key(a.c.a)) return yes();
+   return no('Una línea debe concluir φ→ψ, la otra ¬ψ, y la nueva ¬φ.');}},
+ ED:{n:2,name:'Eliminación del disyuntor',form:'de Γ ⊢ φ∨ψ y Γ ⊢ ¬φ a Γ ⊢ ψ',
+  chk:(L,[p,q])=>{ if(!seteq(p.Gk,L.Gk)||!seteq(q.Gk,L.Gk)) return no(ANT);
+   for(const [a,b] of [[p,q],[q,p]]) if(a.c.t==='or'&&((b.ck===key(N(a.c.a))&&L.ck===key(a.c.b))||(b.ck===key(N(a.c.b))&&L.ck===key(a.c.a)))) return yes();
+   return no('Una línea debe concluir una disyunción, la otra la negación de un disyunto, y la nueva el otro disyunto.');}},
+ IC:{n:2,name:'Introducción del conjuntor',form:'de Γ ⊢ φ y Γ ⊢ ψ a Γ ⊢ φ∧ψ',
+  chk:(L,[p,q])=>{ if(!isAnd(L.c)) return no('La conclusión nueva debe ser una conjunción.'); if(!seteq(p.Gk,L.Gk)||!seteq(q.Gk,L.Gk)) return no(ANT);
+   const a=key(L.c.a.a.a),b=key(L.c.a.b.a); return (p.ck===a&&q.ck===b)||(p.ck===b&&q.ck===a)?yes():no('Las dos líneas deben concluir, una cada una, los dos miembros de la conjunción.');}},
+ EC:{n:1,name:'Eliminación del conjuntor',form:'de Γ ⊢ φ∧ψ a Γ ⊢ φ (o Γ ⊢ ψ)',
+  chk:(L,[p])=>!isAnd(p.c)?no('La línea citada debe concluir una conjunción.'):!seteq(p.Gk,L.Gk)?no('(EC) no cambia el antecedente.'):L.ck===key(p.c.a.a.a)||L.ck===key(p.c.a.b.a)?yes():no('La conclusión nueva debe ser uno de los dos miembros de la conjunción.')},
+ EG:{n:1,name:'Eliminación del generalizador',form:'de Γ ⊢ ∀xφ a Γ ⊢ S^τ_x φ',
+  chk:(L,[p])=>{ if(!isAll(p.c)) return no('La línea citada debe concluir una fórmula que empiece por ∀.'); if(!seteq(p.Gk,L.Gk)) return no('(EG) no cambia el antecedente.');
+   const m=matchSubst(p.c.a.a.a,L.c,p.c.a.v); if(m.cap) return no('Ese término no se puede sustituir ahí: una de sus variables quedaría ligada.');
+   return m.ok?yes(m.tau?'τ = '+showT(m.tau):''):no('La conclusión nueva debe ser la fórmula cuantificada con un mismo término en todos los lugares de '+p.c.a.v+'.');}},
+ IGA:{n:1,name:'Introducción del generalizador en el antecedente',form:'de Γ,S^τ_x φ ⊢ ψ a Γ,∀xφ ⊢ ψ',
+  chk:(L,[p])=>{ if(p.ck!==L.ck) return no('(IGA) no cambia la conclusión.'); const us=L.G.filter(isAll); if(!us.length) return no('En el antecedente nuevo tiene que haber una fórmula que empiece por ∀.');
+   for(const u of us){const R=minus(L.Gk,key(u)); for(const th of p.G){const m=matchSubst(u.a.a.a,th,u.a.v); if(m.ok&&ext(p,R,key(th))) return yes(m.tau?'τ = '+showT(m.tau):'');}}
+   return no('No encuentro en la línea citada un caso particular de la fórmula universal, con el mismo resto Γ.');}},
+ IGC:{n:1,name:'Introducción del generalizador en el consecuente',form:'de Γ ⊢ S^y_x φ a Γ ⊢ ∀xφ, si y no está libre en Γ ni en ∀xφ',
+  chk:(L,[p])=>{ if(!isAll(L.c)) return no('La conclusión nueva debe empezar por ∀.'); if(!seteq(p.Gk,L.Gk)) return no('(IGC) no cambia el antecedente.');
+   const x=L.c.a.v, m=matchSubst(L.c.a.a.a,p.c,x); if(!m.ok) return no('La conclusión citada no es la fórmula cuantificada con una variable y en lugar de '+x+'.');
+   if(m.tau===undefined) return yes(); if(m.tau.t!=='var') return no('En (IGC) lo que sustituye a '+x+' tiene que ser una variable, no «'+showT(m.tau)+'».');
+   const y=m.tau.n; if(freeAll(L.G).has(y)) return no('No se cumple la condición: '+y+' está libre en el antecedente.');
+   if(free(L.c).has(y)) return no('No se cumple la condición: '+y+' está libre en «'+show(L.c)+'».');
+   return yes('y = '+y+': no está libre en el antecedente ni en '+show(L.c));}},
+};
+const showT=t=>t.t==='fn'?t.n+showT(t.a):t.n;
+function check(lines,L,rule,refs){
+  const R=RULES[rule]; if(!R) return no('Elige una regla.');
+  if(refs.length!==R.n) return no('('+rule+') se aplica a '+(R.n===0?'ninguna línea':R.n===1?'una línea':'dos líneas')+'.');
+  const ps=[]; for(const r of refs){ if(!Number.isInteger(r)||r<1||r>lines.length) return no('La línea '+r+' no existe todavía.'); ps.push(lines[r-1]); }
+  return R.chk(L,ps);
+}
+if(typeof module!=='undefined') module.exports={parseSequent,parseFormula,check,RULES,show,showSeq,key,mk,setGiven,same};
+
+// Ejercicios: meta, pista y una solución modelo [secuencia, regla, líneas]
+const EJ=[
+ {b:'A · Conectores, con las reglas primitivas',prim:true,items:[
+  {id:'a1',goal:'⊢ Pa ∨ ¬Pa',hint:'No hay antecedente del que partir: prueba por casos. Consigue la disyunción suponiendo Pa y suponiendo ¬Pa.',
+   sol:[['Pa ⊢ Pa','IH'],['Pa ⊢ Pa ∨ ¬Pa','IDC',1],['¬Pa ⊢ ¬Pa','IH'],['¬Pa ⊢ Pa ∨ ¬Pa','IDC',3],['⊢ Pa ∨ ¬Pa','PC',2,4]]},
+  {id:'a2',goal:'Pa ∨ Qa ⊢ Qa ∨ Pa',hint:'Disyunción en el antecedente: (IDA). Deduce la conclusión desde cada disyunto por separado.',
+   sol:[['Pa ⊢ Pa','IH'],['Pa ⊢ Qa ∨ Pa','IDC',1],['Qa ⊢ Qa','IH'],['Qa ⊢ Qa ∨ Pa','IDC',3],['Pa ∨ Qa ⊢ Qa ∨ Pa','IDA',2,4]]},
+  {id:'a3',goal:'Pa, ¬Pa ⊢ Qa',hint:'De una contradicción sale cualquier cosa. Con las primitivas: (NC), metiendo ¬Qa en el antecedente.',
+   sol:[['Pa, ¬Pa, ¬Qa ⊢ Pa','IH'],['Pa, ¬Pa, ¬Qa ⊢ ¬Pa','IH'],['Pa, ¬Pa ⊢ Qa','NC',1,2]]},
+  {id:'a4',goal:'¬¬Pa ⊢ Pa',hint:'(NC): supón ¬Pa junto a ¬¬Pa y tendrás una fórmula y su negación.',
+   sol:[['¬¬Pa, ¬Pa ⊢ ¬Pa','IH'],['¬¬Pa, ¬Pa ⊢ ¬¬Pa','IH'],['¬¬Pa ⊢ Pa','NC',1,2]]},
+  {id:'a5',goal:'Pa, Pa → Qa ⊢ Qa',hint:'Pa → Qa abrevia ¬Pa ∨ Qa: usa (IDA). El caso ¬Pa choca con Pa; el caso Qa es inmediato.',
+   sol:[['Pa, ¬Pa, ¬Qa ⊢ Pa','IH'],['Pa, ¬Pa, ¬Qa ⊢ ¬Pa','IH'],['Pa, ¬Pa ⊢ Qa','NC',1,2],['Pa, Qa ⊢ Qa','IH'],['Pa, Pa → Qa ⊢ Qa','IDA',3,4]]},
+ ]},
+ {b:'B · Conectores, con reglas derivadas',items:[
+  {id:'b1',goal:'Pa → Qa, Qa → Ra ⊢ Pa → Ra',hint:'Para probar un condicional, (TD): mete Pa en el antecedente y encadena dos (MP).',
+   sol:[['Pa → Qa, Qa → Ra, Pa ⊢ Pa → Qa','IH'],['Pa → Qa, Qa → Ra, Pa ⊢ Pa','IH'],['Pa → Qa, Qa → Ra, Pa ⊢ Qa','MP',1,2],['Pa → Qa, Qa → Ra, Pa ⊢ Qa → Ra','IH'],['Pa → Qa, Qa → Ra, Pa ⊢ Ra','MP',4,3],['Pa → Qa, Qa → Ra ⊢ Pa → Ra','TD',5]]},
+  {id:'b2',goal:'Pa → Qa ⊢ ¬Qa → ¬Pa',hint:'Consigue primero Pa → Qa, Pa ⊢ Qa. Después (Cp) cambia de sitio Pa y Qa, y (TD) cierra.',
+   sol:[['Pa → Qa, Pa ⊢ Pa → Qa','IH'],['Pa → Qa, Pa ⊢ Pa','IH'],['Pa → Qa, Pa ⊢ Qa','MP',1,2],['Pa → Qa, ¬Qa ⊢ ¬Pa','Cp',3],['Pa → Qa ⊢ ¬Qa → ¬Pa','TD',4]]},
+  {id:'b3',goal:'Pa ∧ Qa ⊢ Qa ∧ Pa',hint:'Separa la conjunción con (EC) dos veces y vuelve a unirla con (IC) en el otro orden.',
+   sol:[['Pa ∧ Qa ⊢ Pa ∧ Qa','IH'],['Pa ∧ Qa ⊢ Pa','EC',1],['Pa ∧ Qa ⊢ Qa','EC',1],['Pa ∧ Qa ⊢ Qa ∧ Pa','IC',3,2]]},
+  {id:'b4',goal:'Pa ∨ Qa, ¬Pa ⊢ Qa',hint:'Es el silogismo disyuntivo: dos (IH) y (ED).',
+   sol:[['Pa ∨ Qa, ¬Pa ⊢ Pa ∨ Qa','IH'],['Pa ∨ Qa, ¬Pa ⊢ ¬Pa','IH'],['Pa ∨ Qa, ¬Pa ⊢ Qa','ED',1,2]]},
+ ]},
+ {b:'C · Cuantificadores',items:[
+  {id:'c1',goal:'Pa ⊢ ∃x Px',hint:'(IPC): Pa es Px con a en lugar de x.',
+   sol:[['Pa ⊢ Pa','IH'],['Pa ⊢ ∃x Px','IPC',1]]},
+  {id:'c2',goal:'∀x Px ⊢ ∃x Px',hint:'Empieza por dentro: Px ⊢ Px. Luego pon el ∃ a la derecha (IPC) y el ∀ a la izquierda (IGA).',
+   sol:[['Px ⊢ Px','IH'],['Px ⊢ ∃x Px','IPC',1],['∀x Px ⊢ ∃x Px','IGA',2]]},
+  {id:'c3',goal:'∃x (Px ∧ Qx) ⊢ ∃x Px',hint:'Trabaja con un testigo y: desde Py ∧ Qy llega a ∃x Px, y al final (IPA). Comprueba que y no queda libre.',
+   sol:[['Py ∧ Qy ⊢ Py ∧ Qy','IH'],['Py ∧ Qy ⊢ Py','EC',1],['Py ∧ Qy ⊢ ∃x Px','IPC',2],['∃x (Px ∧ Qx) ⊢ ∃x Px','IPA',3]]},
+  {id:'c4',goal:'∀x (Px → Qx), ∃x Px ⊢ ∃x Qx',hint:'Con un testigo y: de Py y Py → Qy (EG) sale Qy, luego ∃x Qx. El último paso es (IPA).',
+   sol:[['∀x (Px → Qx), Py ⊢ ∀x (Px → Qx)','IH'],['∀x (Px → Qx), Py ⊢ Py → Qy','EG',1],['∀x (Px → Qx), Py ⊢ Py','IH'],['∀x (Px → Qx), Py ⊢ Qy','MP',2,3],['∀x (Px → Qx), Py ⊢ ∃x Qx','IPC',4],['∀x (Px → Qx), ∃x Px ⊢ ∃x Qx','IPA',5]]},
+  {id:'c5',goal:'¬∃x Px ⊢ ∀x ¬Px',hint:'De Py ⊢ ∃x Px, la contraposición (Cp) da ¬∃x Px ⊢ ¬Py. Después, (IGC).',
+   sol:[['Py ⊢ Py','IH'],['Py ⊢ ∃x Px','IPC',1],['¬∃x Px ⊢ ¬Py','Cp',2],['¬∃x Px ⊢ ∀x ¬Px','IGC',3]]},
+  {id:'c6',goal:'∀x Px ∨ ∀x Qx ⊢ ∀x (Px ∨ Qx)',hint:'(IDA): desde cada disyunto llega a ∀x (Px ∨ Qx) con (IDC), (IGA) e (IGC) usando una y nueva.',
+   sol:[['Py ⊢ Py','IH'],['Py ⊢ Py ∨ Qy','IDC',1],['∀x Px ⊢ Py ∨ Qy','IGA',2],['∀x Px ⊢ ∀x (Px ∨ Qx)','IGC',3],['Qy ⊢ Qy','IH'],['Qy ⊢ Py ∨ Qy','IDC',5],['∀x Qx ⊢ Py ∨ Qy','IGA',6],['∀x Qx ⊢ ∀x (Px ∨ Qx)','IGC',7],['∀x Px ∨ ∀x Qx ⊢ ∀x (Px ∨ Qx)','IDA',4,8]]},
+  {id:'c7',goal:'∃x ∀y Rxy ⊢ ∀y ∃x Rxy',hint:'De dentro afuera: Rxy ⊢ Rxy, luego (IPC), (IGA), (IPA) con la propia x e (IGC) con la propia y.',
+   sol:[['Rxy ⊢ Rxy','IH'],['Rxy ⊢ ∃x Rxy','IPC',1],['∀y Rxy ⊢ ∃x Rxy','IGA',2],['∃x ∀y Rxy ⊢ ∃x Rxy','IPA',3],['∃x ∀y Rxy ⊢ ∀y ∃x Rxy','IGC',4]]},
+ ]},
+ {b:'D · Igualdad',items:[
+  {id:'d1',goal:'⊢ ∃x x=a',hint:'(RI) da a=a, que es x=a con a en lugar de x.',
+   sol:[['⊢ a=a','RI'],['⊢ ∃x x=a','IPC',1]]},
+  {id:'d2',goal:'a=b ⊢ b=a',hint:'Parte de a=a (RI). (SI) con a=b permite cambiar la primera a por b.',
+   sol:[['⊢ a=a','RI'],['a=b ⊢ b=a','SI',1]]},
+  {id:'d3',goal:'a=b, b=c ⊢ a=c',hint:'Parte de a=b ⊢ a=b y usa (SI) con b=c para cambiar la b de la conclusión por c.',
+   sol:[['a=b ⊢ a=b','IH'],['a=b, b=c ⊢ a=c','SI',1]]},
+  {id:'d4',goal:'Pa, a=b ⊢ Pb',hint:'(IH) y (SI).',
+   sol:[['Pa ⊢ Pa','IH'],['Pa, a=b ⊢ Pb','SI',1]]},
+  {id:'d5',goal:'⊢ ∀x x=x',hint:'(RI) con una variable y, y después (IGC): no hay antecedente donde y pueda estar libre.',
+   sol:[['⊢ y=y','RI'],['⊢ ∀x x=x','IGC',1]]},
+ ]},
+ {b:'E · Práctica 5: justificar reglas derivadas',note:'Γ, φ y ψ son letras esquemáticas. Las líneas dadas se escriben con la regla (Pr).',items:[
+  {id:'p1a',t:'T1 a) Regla (T)',given:['Γ ⊢ φ','Γ, φ ⊢ ψ'],goal:'Γ ⊢ ψ',allow:['SNC'],hint:'Prueba por casos sobre φ. El caso φ es la segunda premisa. En el caso ¬φ tienes φ (por (M)) y ¬φ: (SNC).',
+   sol:[['Γ ⊢ φ','Pr'],['Γ, φ ⊢ ψ','Pr'],['Γ, ¬φ ⊢ φ','M',1],['Γ, ¬φ ⊢ ¬φ','IH'],['Γ, ¬φ ⊢ ψ','SNC',3,4],['Γ ⊢ ψ','PC',2,5]]},
+  {id:'p1b1',t:'T1 b) Regla (DN), quitar',given:['Γ ⊢ ¬¬φ'],goal:'Γ ⊢ φ',allow:['SNC','T'],hint:'(NC): con ¬φ en el antecedente tienes ¬φ y ¬¬φ, una fórmula y su negación.',
+   sol:[['Γ ⊢ ¬¬φ','Pr'],['Γ, ¬φ ⊢ ¬¬φ','M',1],['Γ, ¬φ ⊢ ¬φ','IH'],['Γ ⊢ φ','NC',3,2]]},
+  {id:'p1b2',t:'T1 b) Regla (DN), poner',given:['Γ ⊢ φ'],goal:'Γ ⊢ ¬¬φ',allow:['SNC','T'],hint:'Casos sobre ¬φ. En el caso ¬φ hay contradicción con φ: (SNC) da ¬¬φ. El caso ¬¬φ es (IH).',
+   sol:[['Γ ⊢ φ','Pr'],['Γ, ¬φ ⊢ φ','M',1],['Γ, ¬φ ⊢ ¬φ','IH'],['Γ, ¬φ ⊢ ¬¬φ','SNC',2,3],['Γ, ¬¬φ ⊢ ¬¬φ','IH'],['Γ ⊢ ¬¬φ','PC',4,5]]},
+  {id:'p1c1',t:'T1 c) Regla (Cp a) · adicional',given:['Γ, φ ⊢ ψ'],goal:'Γ, ¬ψ ⊢ ¬φ',allow:['SNC','T','DN'],hint:'Añade ¬ψ al antecedente y haz casos sobre φ: con φ sale ψ, que choca con ¬ψ.',
+   sol:[['Γ, φ ⊢ ψ','Pr'],['Γ, ¬ψ, φ ⊢ ψ','M',1],['Γ, ¬ψ, φ ⊢ ¬ψ','IH'],['Γ, ¬ψ, φ ⊢ ¬φ','SNC',2,3],['Γ, ¬ψ, ¬φ ⊢ ¬φ','IH'],['Γ, ¬ψ ⊢ ¬φ','PC',4,5]]},
+  {id:'p1c2',t:'T1 c) Regla (Cp c) · adicional',given:['Γ, ¬φ ⊢ ψ'],goal:'Γ, ¬ψ ⊢ φ',allow:['SNC','T','DN'],hint:'(NC) directamente: con ¬φ en el antecedente salen ψ y ¬ψ.',
+   sol:[['Γ, ¬φ ⊢ ψ','Pr'],['Γ, ¬ψ, ¬φ ⊢ ψ','M',1],['Γ, ¬ψ, ¬φ ⊢ ¬ψ','IH'],['Γ, ¬ψ ⊢ φ','NC',2,3]]},
+  {id:'p1d',t:'T1 d) Tercero excluido (TND)',goal:'⊢ φ ∨ ¬φ',allow:['SNC','T','DN'],hint:'Antecedente vacío: prueba por casos sobre φ, con (IDC) en cada caso.',
+   sol:[['φ ⊢ φ','IH'],['φ ⊢ φ ∨ ¬φ','IDC',1],['¬φ ⊢ ¬φ','IH'],['¬φ ⊢ φ ∨ ¬φ','IDC',3],['⊢ φ ∨ ¬φ','PC',2,4]]},
+  {id:'p2a',t:'T2 a) Ejercicio 6',goal:'¬φ ⊢ φ → ψ',allow:['SNC','T','DN','Cp'],hint:'φ → ψ abrevia ¬φ ∨ ψ. Bastan dos líneas: (IH) e (IDC).',
+   sol:[['¬φ ⊢ ¬φ','IH'],['¬φ ⊢ φ → ψ','IDC',1]]},
+  {id:'p2b',t:'T2 b) Regla (MP)',given:['Γ ⊢ φ → ψ','Γ ⊢ φ'],goal:'Γ ⊢ ψ',allow:['SNC','T','DN','Cp'],hint:'Trabaja con el antecedente Γ, φ. (IDA) sobre ¬φ ∨ ψ: el caso ¬φ choca con φ. Termina con (T) dos veces.',
+   sol:[['Γ ⊢ φ → ψ','Pr'],['Γ ⊢ φ','Pr'],['Γ, φ, ¬φ ⊢ φ','IH'],['Γ, φ, ¬φ ⊢ ¬φ','IH'],['Γ, φ, ¬φ ⊢ ψ','SNC',3,4],['Γ, φ, ψ ⊢ ψ','IH'],['Γ, φ, ¬φ ∨ ψ ⊢ ψ','IDA',5,6],['Γ, φ ⊢ ¬φ ∨ ψ','M',1],['Γ, φ ⊢ ψ','T',8,7],['Γ ⊢ ψ','T',2,9]]},
+  {id:'p2c',t:'T2 c) Regla (MT) · adicional',given:['Γ ⊢ φ → ψ','Γ ⊢ ¬ψ'],goal:'Γ ⊢ ¬φ',allow:['SNC','T','DN','Cp','MP'],hint:'Casos sobre φ. Con φ, (MP) da ψ, que choca con ¬ψ.',
+   sol:[['Γ ⊢ φ → ψ','Pr'],['Γ ⊢ ¬ψ','Pr'],['Γ, φ ⊢ φ → ψ','M',1],['Γ, φ ⊢ φ','IH'],['Γ, φ ⊢ ψ','MP',3,4],['Γ, φ ⊢ ¬ψ','M',2],['Γ, φ ⊢ ¬φ','SNC',5,6],['Γ, ¬φ ⊢ ¬φ','IH'],['Γ ⊢ ¬φ','PC',7,8]]},
+  {id:'p3a',t:'T3 a) Regla (IGC), en un caso',given:['Qa ⊢ Py'],goal:'Qa ⊢ ∀x Px',allow:['SNC','T','DN','Cp','MP','MT','IC','EC','EG'],hint:'Despliega: ∀x Px es ¬∃x ¬Px. Casos sobre ∃x ¬Px. Desde ¬Py hay contradicción, y (IPA) cambia ¬Py por ∃x ¬Px: ahí se usa que y no está libre.',
+   sol:[['Qa ⊢ Py','Pr'],['Qa, ¬Py ⊢ Py','M',1],['Qa, ¬Py ⊢ ¬Py','IH'],['Qa, ¬Py ⊢ ¬∃x ¬Px','SNC',2,3],['Qa, ∃x ¬Px ⊢ ¬∃x ¬Px','IPA',4],['Qa, ¬∃x ¬Px ⊢ ¬∃x ¬Px','IH'],['Qa ⊢ ∀x Px','PC',5,6]]},
+  {id:'p3b',t:'T3 b) Regla (IGA), en un caso · adicional',given:['Qa, Pb ⊢ Rc'],goal:'Qa, ∀x Px ⊢ Rc',allow:['SNC','T','DN','Cp','MP','MT','IC','EC','EG'],hint:'De ∀x Px sale Pb con (EG). Después (T) con la premisa, ampliada con (M).',
+   sol:[['Qa, Pb ⊢ Rc','Pr'],['Qa, ∀x Px ⊢ ∀x Px','IH'],['Qa, ∀x Px ⊢ Pb','EG',2],['Qa, ∀x Px, Pb ⊢ Rc','M',1],['Qa, ∀x Px ⊢ Rc','T',3,4]]},
+  {id:'p3c',t:'T3 c) Ejercicio 8',goal:'∀x (Rx → fx=a), ∀x (¬Rx → fx=a) ⊢ ∀x fx=a',hint:'(EG) con la propia x en las dos premisas. Casos sobre Rx, con (MP) en cada uno. Al final (IGC): x no está libre en el antecedente.',
+   sol:[['∀x (Rx → fx=a), ∀x (¬Rx → fx=a) ⊢ ∀x (Rx → fx=a)','IH'],['∀x (Rx → fx=a), ∀x (¬Rx → fx=a) ⊢ Rx → fx=a','EG',1],['∀x (Rx → fx=a), ∀x (¬Rx → fx=a) ⊢ ∀x (¬Rx → fx=a)','IH'],['∀x (Rx → fx=a), ∀x (¬Rx → fx=a) ⊢ ¬Rx → fx=a','EG',3],
+    ['∀x (Rx → fx=a), ∀x (¬Rx → fx=a), Rx ⊢ Rx → fx=a','M',2],['∀x (Rx → fx=a), ∀x (¬Rx → fx=a), Rx ⊢ Rx','IH'],['∀x (Rx → fx=a), ∀x (¬Rx → fx=a), Rx ⊢ fx=a','MP',5,6],
+    ['∀x (Rx → fx=a), ∀x (¬Rx → fx=a), ¬Rx ⊢ ¬Rx → fx=a','M',4],['∀x (Rx → fx=a), ∀x (¬Rx → fx=a), ¬Rx ⊢ ¬Rx','IH'],['∀x (Rx → fx=a), ∀x (¬Rx → fx=a), ¬Rx ⊢ fx=a','MP',8,9],
+    ['∀x (Rx → fx=a), ∀x (¬Rx → fx=a) ⊢ fx=a','PC',7,10],['∀x (Rx → fx=a), ∀x (¬Rx → fx=a) ⊢ ∀x fx=a','IGC',11]]},
+ ]},
+ {b:'F · Práctica 5: ¿dónde falla?',items:[
+  {id:'p4a',t:'T4 a)',err:true,bad:2,goal:'Px ⊢ ∀x Px',hint:'Mira la condición de (IGC) sobre la variable.',
+   lines:[['Px ⊢ Px','IH'],['Px ⊢ ∀x Px','IGC',1]],
+   why:'(IGC) exige que la variable no esté libre en el antecedente ni en ∀x Px, y aquí x está libre en el antecedente (Px).',
+   model:'Sistema: universo {1, 2}, P = {1}, asignación x ↦ 1. Satisface Px y no ∀x Px.'},
+  {id:'p4b',t:'T4 b)',err:true,bad:5,goal:'∃x Qx, ∃x Px ⊢ ∃x (Px ∧ Qx)',hint:'Hay dos aplicaciones de (IPA). En cada una, mira si la variable está libre en el resto del antecedente.',
+   lines:[['Px, Qx ⊢ Px','IH'],['Px, Qx ⊢ Qx','IH'],['Px, Qx ⊢ Px ∧ Qx','IC',1,2],['Px, Qx ⊢ ∃x (Px ∧ Qx)','IPC',3],['Px, ∃x Qx ⊢ ∃x (Px ∧ Qx)','IPA',4],['∃x Qx, Px ⊢ ∃x (Px ∧ Qx)','M',5],['∃x Qx, ∃x Px ⊢ ∃x (Px ∧ Qx)','IPA',6]],
+   trap:{7:'La línea 7 es correcta como paso: el resto del antecedente es ∃x Qx, donde no hay x libre. El error viene de antes.'},
+   why:'(IPA) cambia Qx por ∃x Qx, pero x está libre en el resto del antecedente (Px). Las líneas 1 a 4 y la 6 son correctas, y la 7 también como paso.',
+   model:'Sistema: universo {1, 2}, P = {1}, Q = {2}. Hay algo P y algo Q, pero nada es las dos cosas.'},
+  {id:'p4c',t:'T4 c)',err:true,bad:3,goal:'Pa ∨ Qa ⊢ Pa',hint:'¿Qué tienen que tener en común las dos líneas a las que se aplica (IDA)?',
+   lines:[['Pa ⊢ Pa','IH'],['Qa ⊢ Qa','IH'],['Pa ∨ Qa ⊢ Pa','IDA',1,2]],
+   why:'(IDA) exige la misma conclusión en los dos casos, y aquí es Pa en uno y Qa en el otro. Bien hecho, con (IDC) en cada caso, se llega a Pa ∨ Qa ⊢ Pa ∨ Qa.',
+   model:'Sistema: universo {1}, a denota 1, P = ∅, Q = {1}. Pa ∨ Qa es verdadera y Pa falsa.'},
+ ]},
+];
+if(typeof module!=='undefined') module.exports={EJ};
+
+(function(){
+const $=id=>document.getElementById(id);
+const FREE={id:'libre',goal:null,hint:'',sol:null};
+const ALL=[]; EJ.forEach(b=>b.items.forEach(e=>{e.prim=!!b.prim;e.note=b.note||'';ALL.push(e);}));
+const allowed=r=>r==='Pr'?!!cur.given:cur.allow?(!!RULES[r].prim||cur.allow.includes(r)):cur.prim?!!RULES[r].prim:true;
+const label=e=>e.t?e.t:showSeq(parseSequent(e.goal)); ALL.push(FREE);
+let store={lines:{},solved:{},cur:'a1',fg:''};
+try{const s=JSON.parse(localStorage.getItem('secuentes')||'null'); if(s) store=Object.assign(store,s);}catch(e){}
+const first=!Object.keys(store.lines).length;
+if(first) store.lines.a1=[['Pa ⊢ Pa','IH',[]],['Pa ⊢ Pa ∨ ¬Pa','IDC',[1]]];
+const save=()=>{try{localStorage.setItem('secuentes',JSON.stringify(store));}catch(e){}};
+let cur=ALL.find(e=>e.id===store.cur)||ALL[0], lines=[];
+function goalSeq(){ try{ if(cur.id==='libre') return store.fg.trim()?parseSequent(store.fg):null; return parseSequent(cur.goal);}catch(e){return null;} }
+function load(){ lines=[]; setGiven((cur.given||[]).map(parseSequent)); if(cur.err) return; for(const [s,r,refs] of (store.lines[cur.id]||[])){ try{const L=parseSequent(s); L.rule=r; L.refs=refs; L.src=s; const res=check(lines,L,r,refs); L.note=res.note||''; lines.push(L);}catch(e){break;} } }
+function persist(){ store.lines[cur.id]=lines.map(L=>[L.src,L.rule,L.refs]); store.cur=cur.id; save(); }
+function nav(){ const n=$('nav'); n.textContent='';
+  EJ.forEach(b=>{const d=document.createElement('div'); const h=document.createElement('h2'); h.textContent=b.b; d.appendChild(h); const ul=document.createElement('ul');
+    b.items.forEach(e=>ul.appendChild(item(e,label(e)))); d.appendChild(ul); n.appendChild(d);});
+  const d=document.createElement('div'); const h=document.createElement('h2'); h.textContent='Por tu cuenta'; d.appendChild(h); const ul=document.createElement('ul'); const li=item(FREE,'Deducción libre'); li.firstChild.classList.add('free'); ul.appendChild(li); d.appendChild(ul); n.appendChild(d); }
+function item(e,text){ const li=document.createElement('li'), b=document.createElement('button'); b.type='button';
+  const st=document.createElement('span'); st.className='st'; st.textContent=store.solved[e.id]?'✓':''; const t=document.createElement('span'); t.textContent=text;
+  b.append(st,t); if(e===cur) b.setAttribute('aria-current','true'); b.onclick=()=>{cur=e; load(); persist(); say(); render(); $('seq').value=''; preview();}; li.appendChild(b); return li; }
+function ruleSelect(){ const s=$('rule'), keep=s.value; s.textContent='';
+  const g1=document.createElement('optgroup'); g1.label='Primitivas'; const g2=document.createElement('optgroup'); g2.label='Derivadas';
+  for(const k in RULES){ if(k==='Pr'&&!cur.given) continue; const o=document.createElement('option'); o.value=k; o.textContent=k==='Pr'?'Pr (premisa dada)':k; (RULES[k].prim||k==='Pr'?g1:g2).appendChild(o); if(!allowed(k)) o.disabled=true;}
+  s.append(g1,g2); s.value=RULES[keep]&&allowed(keep)?keep:(cur.given&&!lines.length?'Pr':'IH'); refsState(); }
+function refsState(){ const n=RULES[$('rule').value].n, r=$('refs'); r.disabled=n===0; if(n===0) r.value=''; r.placeholder=n===0?'ninguna':n===1?'p. ej. 1':'p. ej. 2, 4'; }
+function table(el,ls,goal,own){ el.textContent='';
+  if(!ls.length) return; const hr=el.insertRow(); ['N.º','Antecedente','','Conclusión','Regla',''].forEach(t=>{const th=document.createElement('th'); th.textContent=t; hr.appendChild(th);});
+  ls.forEach((L,i)=>{const tr=el.insertRow(); const isGoal=goal&&L.ck===goal.ck&&L.Gk.size===goal.Gk.size&&[...L.Gk].every(k=>goal.Gk.has(k)); if(isGoal) tr.className='goalrow';
+    const n=tr.insertCell(); n.className='n';
+    if(own==='err'){const b=document.createElement('button'); b.type='button'; b.textContent=i+1; b.title='Señalar la línea '+(i+1); b.onclick=()=>pickErr(i+1); n.appendChild(b);}
+    else if(own){const b=document.createElement('button'); b.type='button'; b.textContent=i+1; b.title='Citar la línea '+(i+1); b.onclick=()=>{const r=$('refs'); if(r.disabled) return; const need=RULES[$('rule').value].n; let v=r.value.split(/[^0-9]+/).filter(Boolean); if(v.length>=need) v=[]; v.push(i+1); r.value=v.join(', ');}; n.appendChild(b);} else n.textContent=i+1;
+    const a=tr.insertCell(); a.className='a'; a.textContent=L.G.length?L.G.map(f=>show(f)).join(', '):'—';
+    const t=tr.insertCell(); t.className='t'; t.textContent='⊢';
+    const c=tr.insertCell(); c.className='c'; c.textContent=show(L.c);
+    const r=tr.insertCell(); r.className='r'; r.textContent='('+L.rule+')'+(L.refs.length?' en '+L.refs.join(', '):'');
+    if(L.note){const sm=document.createElement('small'); sm.textContent=L.note; r.appendChild(sm);}
+    const u=tr.insertCell(); u.className='u';
+    if(own===true){const b=document.createElement('button'); b.type='button'; b.className='icon'; b.textContent='copiar'; b.title='Copiar esta línea en la casilla para modificarla'; b.onclick=()=>{$('seq').value=showSeq(L); preview(); $('seq').focus();}; u.appendChild(b);} });
+}
+function pick(){ const s=$('pick'); s.textContent='';
+  EJ.forEach(b=>{const g=document.createElement('optgroup'); g.label=b.b; b.items.forEach(e=>{const o=document.createElement('option'); o.value=e.id; o.textContent=(store.solved[e.id]?'✓ ':'')+label(e); g.appendChild(o);}); s.appendChild(g);});
+  const o=document.createElement('option'); o.value='libre'; o.textContent='Deducción libre'; s.appendChild(o); s.value=cur.id; }
+function render(){ nav(); pick(); ruleSelect();
+  const g=goalSeq(), free=cur.id==='libre';
+  $('goal').textContent=free?(g?showSeq(g):'Escribe la secuencia que quieres deducir, o deduce sin meta.'):showSeq(g);
+  $('goal').style.fontSize=free&&!g?'16px':''; $('goal').style.fontFamily=free&&!g?'var(--ui)':'';
+  $('freegoal').hidden=!free; if(free&&document.activeElement!==$('fg')) $('fg').value=store.fg;
+  $('mode').textContent=cur.err?'Encuentra el error':free?'Todas las reglas':cur.allow?'Primitivas y '+cur.allow.map(k=>'('+k+')').join(', '):cur.prim?'Solo reglas primitivas':'Primitivas y derivadas';
+  $('gl').textContent=cur.err?'Lo que pretende deducir':cur.given?'Regla que hay que justificar: llegar a':'Meta';
+  const gv=$('given'); gv.hidden=!cur.given; if(cur.given){ gv.textContent='Líneas dadas (regla Pr): '; cur.given.forEach((q,i)=>{const sp=document.createElement('span'); sp.className='m'; sp.textContent=showSeq(parseSequent(q)); gv.append(sp,i<cur.given.length-1?'\u2003y\u2003':''); }); }
+  $('formpanel').hidden=!!cur.err; $('emsg').hidden=true;
+  $('dl').textContent=cur.err?'Una línea está mal justificada. Pulsa su número.':'Tu deducción';
+  if(cur.err){ $('bsol').textContent='Ver la respuesta'; table($('ded'),errLines(),g,'err'); $('empty').hidden=true; $('bhint').hidden=$('bsol').hidden=false; $('hint').hidden=true; $('sol').hidden=true; $('bhint').textContent='Ver una pista'; $('solved').hidden=!store.solved[cur.id]; return; }
+  $('solved').hidden=!store.solved[cur.id];
+  $('bhint').hidden=$('bsol').hidden=free; $('hint').hidden=true; $('sol').hidden=true; $('bhint').textContent='Ver una pista'; $('bsol').textContent='Ver una solución';
+  table($('ded'),lines,g,true); $('empty').hidden=lines.length>0;
+}
+function errLines(){ const ls=[]; for(const [q,r,...refs] of cur.lines){const L=parseSequent(q); L.rule=r; L.refs=refs; L.note=''; ls.push(L);} return ls; }
+function errAnswer(){ const ls=errLines(); const res=check(ls.slice(0,cur.bad-1),ls[cur.bad-1],ls[cur.bad-1].rule,ls[cur.bad-1].refs);
+  return 'Falla la línea '+cur.bad+'. '+cur.why+'\nEl comprobador la rechaza así: «'+res.msg+'»\n'+cur.model; }
+function pickErr(n){ const m=$('emsg'); m.hidden=false;
+  if(n===cur.bad){ store.solved[cur.id]=true; store.cur=cur.id; save(); render(); m.hidden=false; m.className='ok'; m.textContent='Correcto. '+errAnswer(); return; }
+  const L=errLines()[n-1]; m.className='err'; m.textContent=(cur.trap&&cur.trap[n])||('La línea '+n+' está bien justificada: ('+L.rule+') se aplica correctamente'+(L.refs.length?' a '+L.refs.join(', '):'')+'. Busca otra.'); }
+function say(kind,text){ const m=$('msg'); if(!kind){m.hidden=true;return;} m.hidden=false; m.className=kind; m.textContent=text; }
+function preview(){ const v=$('seq').value, p=$('preview'); if(!v.trim()){p.textContent='';p.className='';return null;}
+  try{const L=parseSequent(v); p.className=''; const a=showSeq(L), b=showSeq(L,true); p.textContent='Se lee: '+a; if(a!==b){const sp=document.createElement('span'); sp.id='raw'; sp.textContent='   ·   Sin abreviaturas: '+b; p.appendChild(sp);} return L;}catch(e){p.className='bad'; p.textContent=e.message; return null;} }
+function reached(L){ const g=goalSeq(); if(!g) return;
+  if(L.ck===g.ck&&L.Gk.size===g.Gk.size&&[...L.Gk].every(k=>g.Gk.has(k))){ store.solved[cur.id]=true; say('done','Has deducido la meta en '+lines.length+' líneas. Deducción correcta.'); return true; }
+  if(L.ck===g.ck&&[...L.Gk].every(k=>g.Gk.has(k))){ say('ok','Línea correcta. Ya tienes la conclusión de la meta; para llegar a su antecedente te falta una (M).'); return true; } }
+$('form').addEventListener('submit',ev=>{ ev.preventDefault();
+  let L; try{L=parseSequent($('seq').value);}catch(e){say('err',e.message);return;}
+  const rule=$('rule').value, refs=$('refs').value.split(/[^0-9]+/).filter(Boolean).map(Number);
+  if(!allowed(rule)){say('err',cur.prim&&!cur.allow?'En este bloque solo valen las reglas primitivas.':'('+rule+') no está entre las reglas permitidas en este ejercicio.');return;}
+  const res=check(lines,L,rule,refs);
+  if(!res.ok){say('err','('+rule+') no se puede aplicar así. '+res.msg);return;}
+  L.rule=rule; L.refs=refs; L.src=$('seq').value; L.note=res.note||''; lines.push(L);
+  if(!reached(L)) say('ok','Línea '+lines.length+' correcta'+(res.note?' ('+res.note+')':'')+'.');
+  persist(); render(); $('seq').value=''; $('refs').value=''; preview(); $('seq').focus(); });
+$('seq').addEventListener('input',preview);
+$('pick').addEventListener('change',()=>{cur=ALL.find(e=>e.id===$('pick').value); load(); persist(); say(); render(); $('seq').value=''; preview();});
+$('rule').addEventListener('change',refsState);
+$('undo').onclick=()=>{ if(!lines.length) return; lines.pop(); persist(); say(); render(); };
+$('clear').onclick=()=>{ lines=[]; persist(); say(); render(); };
+$('bhint').onclick=()=>{ const h=$('hint'); h.hidden=!h.hidden; h.textContent=cur.hint; $('bhint').textContent=h.hidden?'Ver una pista':'Ocultar la pista'; };
+$('bsol').onclick=()=>{ if(cur.err){ const m=$('emsg'); m.hidden=false; m.className='ok'; m.textContent=errAnswer(); return; }
+  const s=$('sol'); s.hidden=!s.hidden; $('bsol').textContent=s.hidden?'Ver una solución':'Ocultar la solución'; if(s.hidden) return;
+  const ls=[]; for(const [q,r,...refs] of cur.sol){const L=parseSequent(q); L.rule=r; L.refs=refs; L.note=check(ls,L,r,refs).note||''; ls.push(L);} const t=document.createElement('table'); t.className='ded'; table(t,ls,null,false); s.textContent=''; s.appendChild(t); };
+$('fg').addEventListener('input',()=>{ store.fg=$('fg').value; save(); const g=goalSeq(); $('goal').textContent=g?showSeq(g):'Escribe la secuencia que quieres deducir, o deduce sin meta.'; $('goal').style.fontSize=g?'':'16px'; $('goal').style.fontFamily=g?'':'var(--ui)'; table($('ded'),lines,g,true); });
+'¬ ∨ ∧ → ↔ ∃ ∀ = ≠ ⊢ Γ φ ψ'.split(' ').forEach(ch=>{const b=document.createElement('button'); b.type='button'; b.textContent=ch; b.setAttribute('aria-label','Insertar '+ch);
+  b.onclick=()=>{const i=document.activeElement===$('fg')||last===$('fg')?$('fg'):$('seq'); const a=i.selectionStart??i.value.length, z=i.selectionEnd??a; i.value=i.value.slice(0,a)+ch+i.value.slice(z); i.focus(); i.setSelectionRange(a+ch.length,a+ch.length); i.dispatchEvent(new Event('input'));}; $('pal').appendChild(b);});
+let last=$('seq'); [$('seq'),$('fg')].forEach(i=>i.addEventListener('focus',()=>last=i));
+{const s=document.createElement('span'); s.innerHTML='También con el teclado: <code>~</code> <code>|</code> <code>&amp;</code> <code>-&gt;</code> <code>&lt;-&gt;</code> <code>E</code> <code>A</code> <code>!=</code> <code>|-</code>'; $('pal').appendChild(s);}
+{const D={
+ IH:[[],'Γ ⊢ φ','si {φ} está en {Γ}'], M:[['Γ ⊢ φ'],'Γ′ ⊢ φ','si {Γ ⊆ Γ′}'],
+ PC:[['Γ, ψ ⊢ φ','Γ, ¬ψ ⊢ φ'],'Γ ⊢ φ'], NC:[['Γ, ¬φ ⊢ ψ','Γ, ¬φ ⊢ ¬ψ'],'Γ ⊢ φ'],
+ IDC:[['Γ ⊢ φ'],'Γ ⊢ φ ∨ ψ','o bien {Γ ⊢ ψ ∨ φ}'], IDA:[['Γ, φ ⊢ χ','Γ, ψ ⊢ χ'],'Γ, φ ∨ ψ ⊢ χ'],
+ IPC:[['Γ ⊢ S[τ|x]φ'],'Γ ⊢ ∃xφ'], IPA:[['Γ, S[y|x]φ ⊢ ψ'],'Γ, ∃xφ ⊢ ψ','si {y} no está libre en {Γ}, {∃xφ}, {ψ}'],
+ RI:[[],'⊢ τ = τ'], SI:[['Γ ⊢ S[τ|x]φ'],'Γ, τ = τ′ ⊢ S[τ′|x]φ'],
+ Pr:[[],'una línea dada','solo en los ejercicios que justifican una regla'],
+ SNC:[['Γ ⊢ ψ','Γ ⊢ ¬ψ'],'Γ ⊢ φ'], T:[['Γ ⊢ φ','Γ, φ ⊢ ψ'],'Γ ⊢ ψ'], MP:[['Γ ⊢ φ → ψ','Γ ⊢ φ'],'Γ ⊢ ψ'],
+ TD:[['Γ, φ ⊢ ψ'],'Γ ⊢ φ → ψ'], DN:[['Γ ⊢ ¬¬φ'],'Γ ⊢ φ','y también de {Γ ⊢ φ} a {Γ ⊢ ¬¬φ}'],
+ Cp:[['Γ, φ ⊢ ψ'],'Γ, ¬ψ ⊢ ¬φ','y las otras tres formas, con {¬φ} o {¬ψ} arriba'],
+ MT:[['Γ ⊢ φ → ψ','Γ ⊢ ¬ψ'],'Γ ⊢ ¬φ'], ED:[['Γ ⊢ φ ∨ ψ','Γ ⊢ ¬φ'],'Γ ⊢ ψ','o con {¬ψ}, para concluir {φ}'],
+ IC:[['Γ ⊢ φ','Γ ⊢ ψ'],'Γ ⊢ φ ∧ ψ'], EC:[['Γ ⊢ φ ∧ ψ'],'Γ ⊢ φ','o bien {Γ ⊢ ψ}'],
+ EG:[['Γ ⊢ ∀xφ'],'Γ ⊢ S[τ|x]φ'], IGA:[['Γ, S[τ|x]φ ⊢ ψ'],'Γ, ∀xφ ⊢ ψ'],
+ IGC:[['Γ ⊢ S[y|x]φ'],'Γ ⊢ ∀xφ','si {y} no está libre en {Γ} ni en {∀xφ}'] };
+ // marcado: S[a|b] es la sustitución, con a arriba y b abajo; las letras de variable y término van en cursiva
+ const fm=(str,el)=>{ const re=/S\[([^|]+)\|([^\]]+)\]|([φψχτxy]′?)|([^φψχτxyS]+|S)/g; let m;
+   while((m=re.exec(str))){ if(m[1]){const w=document.createElement('span'); w.className='Ss'; const b=document.createElement('b'); b.textContent='S'; const ix=document.createElement('span'); ix.className='ix'; const u=document.createElement('i'), d=document.createElement('i'); u.textContent=m[1]; d.textContent=m[2]; ix.append(u,d); w.append(b,ix); el.appendChild(w);}
+     else if(m[3]){const i=document.createElement('i'); i.textContent=m[3]; el.appendChild(i);} else el.appendChild(document.createTextNode(m[4])); } return el; };
+ const q=str=>{const sp=document.createElement('span'); sp.className='q'; return fm(str,sp);};
+ const card=k=>{ const [pr,cn,cd]=D[k], c=document.createElement('div'); c.className='rule';
+   const h=document.createElement('div'); h.className='rh'; const b=document.createElement('b'); b.textContent='('+k+')'; h.append(b,RULES[k].name); c.appendChild(h);
+   if(k==='Pr'){ const p=document.createElement('p'); p.className='cd'; p.textContent='Se escribe tal cual una de las líneas dadas en el enunciado. Solo en los ejercicios que justifican una regla.'; c.appendChild(p); return c; }
+   const f=document.createElement('div'); f.className='fr'; f.setAttribute('role','img'); f.setAttribute('aria-label',RULES[k].form);
+   const a=document.createElement('div'); a.className='pr'; pr.forEach(x=>a.appendChild(q(x))); const z=document.createElement('div'); z.className='cn'; z.appendChild(q(cn)); f.append(a,z); c.appendChild(f);
+   if(cd){ const p=document.createElement('p'); p.className='cd'; cd.split(/\{([^}]*)\}/).forEach((t,i)=>p.appendChild(i%2?q(t):document.createTextNode(t))); c.appendChild(p); }
+   return c; };
+ const sec=(title,keys)=>{ const h=document.createElement('div'); h.className='rgroup'; h.textContent=title; const g=document.createElement('div'); g.className='rgrid'; keys.forEach(k=>g.appendChild(card(k))); $('rules').append(h,g); };
+ sec('Primitivas',Object.keys(RULES).filter(k=>RULES[k].prim)); sec('Derivadas',Object.keys(RULES).filter(k=>!RULES[k].prim&&k!=='Pr').concat('Pr'));}
+load(); render();
+if(first&&cur.id==='a1') say('ok','Este primer ejercicio está empezado como ejemplo: faltan el caso ¬Pa y la prueba por casos (PC).');
+})();
+</script>
+
+</body></html>
