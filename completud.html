@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Práctica de completud</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%231f3b63%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27serif%27%3E%E2%8A%A2%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="fuentes/fuentes.css">
+<style>
+/* Letras griegas siempre con el mismo dibujo (STIX Two Text), también en títulos, botones y desplegables y aunque falte la carpeta fuentes/. */
+@font-face{font-family:"Griega";font-style:normal;font-weight:400;font-display:swap;src:url(data:font/woff2;base64,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) format('woff2');unicode-range:U+0370-03FF,U+1F00-1FFF;}
+@font-face{font-family:"Griega";font-style:normal;font-weight:600;font-display:swap;src:url(data:font/woff2;base64,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) format('woff2');unicode-range:U+0370-03FF,U+1F00-1FFF;}
+:root{
+  /* Cuaderno de ejercicios: una columna de lectura, bloques numerados en dos partes (sesión 5 y sesión 6), fórmulas en serif matemática y controles en sans. Mismo sistema visual que la práctica de corrección. */
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#18212f; --muted:#5a6678; --line:#d5dbe5;
+  --accent:#1f3b63; --accent-soft:#e4ebf5;
+  --ok:#1b6045; --ok-soft:#e1f1e9; --bad:#a23a1c; --bad-soft:#f8e6df;
+  --font-body:"Griega","STIX Two Text","Cambria","Times New Roman",serif;
+  --font-ui:"Griega","IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --font-math:"Griega","STIX Two Text","STIX Two Math","Cambria Math","Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111722; --surface:#1a2231; --ink:#e6ebf3; --muted:#9aa7ba; --line:#313c50;
+    --accent:#9dbcf0; --accent-soft:#25324a;
+    --ok:#7fd3a8; --ok-soft:#183628; --bad:#f0a085; --bad-soft:#3d2219;
+  }
+}
+*{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.5}
+main{max-width:46rem;margin:0 auto;padding:1.5rem 1rem 4rem;display:flex;flex-direction:column;gap:1.5rem}
+h1,h2,h3{font-family:var(--font-ui);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:1.7rem;font-weight:600;color:var(--accent)}
+h2{font-size:1.2rem;font-weight:600}
+h3{font-size:.95rem;font-weight:600}
+p{margin:0}
+.kicker{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.back{font-family:var(--font-ui);font-size:.85rem;color:var(--accent);text-decoration:none}
+.back:hover{text-decoration:underline}
+.m{font-family:var(--font-math);white-space:nowrap}
+.ss{display:inline-flex;flex-direction:column;font-size:.68em;line-height:1;vertical-align:middle;margin-left:.05em;margin-right:.1em}
+header{display:flex;flex-direction:column;gap:.75rem}
+.statement{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);padding:.9rem 1rem;display:flex;flex-direction:column;gap:.45rem}
+.statement .big{font-size:1.12rem}
+.progress{position:sticky;top:0;z-index:5;background:var(--bg);padding:.5rem 0;display:flex;align-items:center;gap:.75rem;font-family:var(--font-ui);font-size:.85rem;border-bottom:1px solid var(--line)}
+.bar{flex:1;height:.5rem;background:var(--accent-soft);border-radius:1rem;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+.progress nav{display:flex;gap:.55rem;flex-wrap:wrap}
+.progress a{color:var(--accent);text-decoration:none;font-weight:500}
+.progress a:hover{text-decoration:underline}
+.part{font-family:var(--font-ui);font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border-top:2px solid var(--accent);padding-top:.6rem;margin-top:.5rem}
+section{display:flex;flex-direction:column;gap:1rem}
+.sec-head{display:flex;flex-direction:column;gap:.35rem}
+.sec-head p{color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:1rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:.4rem;padding:1rem;display:flex;flex-direction:column;gap:.75rem;min-width:0}
+.card.done{border-color:var(--ok)}
+.card-top{display:flex;justify-content:space-between;gap:.75rem;align-items:baseline}
+.tag{font-family:var(--font-ui);font-size:.75rem;color:var(--muted)}
+.state{font-family:var(--font-ui);font-size:.75rem;font-weight:600;padding:.1rem .5rem;border-radius:1rem;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.done .state{background:var(--ok-soft);color:var(--ok)}
+button,select{font-family:var(--font-ui);font-size:.9rem;color:var(--ink)}
+button{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:.35rem;padding:.45rem .8rem;text-align:left}
+button:hover{border-color:var(--accent)}
+button:focus-visible,select:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--surface);border-color:var(--accent);font-weight:500}
+.opts{display:flex;flex-direction:column;gap:.4rem}
+.opts.row3{flex-direction:row;flex-wrap:wrap}
+.opts button.right{border-color:var(--ok);background:var(--ok-soft)}
+.opts button.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.fb{font-size:.95rem;padding:.6rem .75rem;border-radius:.35rem;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--ok-soft);color:var(--ink);border-left:3px solid var(--ok)}
+.fb.no{background:var(--bad-soft);color:var(--ink);border-left:3px solid var(--bad)}
+.given{font-size:1.08rem;background:var(--bg);border-radius:.35rem;padding:.5rem .7rem;overflow-wrap:anywhere}
+.given.m{white-space:normal}
+.given .m{white-space:nowrap}
+ol.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.6rem;counter-reset:s}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:1.6rem minmax(0,1fr);gap:.25rem .5rem;align-items:start;padding:.5rem;border:1px solid var(--line);border-radius:.35rem}
+ol.steps li::before{content:counter(s) ".";font-family:var(--font-ui);color:var(--muted)}
+ol.steps li.right{border-color:var(--ok);background:var(--ok-soft)}
+ol.steps li.wrong{border-color:var(--bad);background:var(--bad-soft)}
+ol.steps select,table.match select{max-width:100%;padding:.3rem;background:var(--surface);border:1px solid var(--line);border-radius:.3rem}
+ol.steps select{grid-column:2;width:100%;min-width:0}
+ol.steps li>div{min-width:0;overflow-wrap:anywhere}
+.lead-in{font-size:.95rem;color:var(--muted)}
+.model{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media (max-width:620px){.model{grid-template-columns:1fr}}
+.panel{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.panel h3{color:var(--muted)}
+.ctl{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;font-family:var(--font-ui);font-size:.88rem}
+.ctl .lbl{min-width:4.6rem}
+.ctl select{max-width:100%;min-width:0;padding:.25rem;background:var(--surface);border:1px solid var(--line);border-radius:.3rem}
+.chip{padding:.2rem .65rem;border-radius:1rem;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+table.rel{border-collapse:collapse;font-family:var(--font-ui);font-size:.85rem}
+table.rel th,table.rel td{padding:.15rem .35rem;text-align:center}
+table.rel input{width:1.05rem;height:1.05rem;accent-color:var(--accent)}
+ul.truth{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.35rem}
+ul.truth li{display:flex;justify-content:space-between;gap:.75rem;align-items:center;padding:.3rem .5rem;border:1px solid var(--line);border-radius:.3rem}
+.tv{font-family:var(--font-ui);font-size:.75rem;font-weight:600;padding:.1rem .45rem;border-radius:1rem;white-space:nowrap}
+.tv.t{background:var(--ok-soft);color:var(--ok)}
+.tv.f{background:var(--bad-soft);color:var(--bad)}
+.tw{overflow-x:auto}
+table.match{border-collapse:collapse;width:100%;font-size:.98rem}
+table.match td{border-top:1px solid var(--line);padding:.5rem .4rem;vertical-align:middle}
+table.match td:first-child{width:58%}
+table.match select{width:100%;min-width:0}
+@media (max-width:620px){
+  table.match,table.match tbody,table.match tr,table.match td{display:block;width:100%}
+  table.match tr{border-top:1px solid var(--line);padding:.35rem 0}
+  table.match td,table.match td:first-child{border-top:0;padding:.2rem .4rem;width:100%}
+}
+ol.letters{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.35rem}
+ol.letters li{display:grid;grid-template-columns:1.6rem minmax(0,1fr);gap:.4rem;padding:.35rem .5rem;background:var(--bg);border-radius:.3rem}
+ol.letters li b{font-family:var(--font-ui);color:var(--accent)}
+table.match tr.right td{background:var(--ok-soft)}
+table.match tr.wrong td{background:var(--bad-soft)}
+table.cmp{border-collapse:collapse;width:100%;font-size:.95rem}
+table.cmp th,table.cmp td{border-bottom:1px solid var(--line);padding:.4rem .5rem;text-align:left;vertical-align:top}
+table.cmp th{font-family:var(--font-ui);font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.classes{display:flex;flex-direction:column;gap:.45rem}
+.cls{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;padding:.4rem .5rem;border:1px solid var(--line);border-radius:.35rem}
+.cls .name{font-family:var(--font-ui);font-size:.8rem;font-weight:600;min-width:4.5rem}
+.cls .term{font-family:var(--font-math);padding:.05rem .45rem;border-radius:1rem;background:var(--accent-soft)}
+.cls .arrow{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);margin-left:auto}
+.cls.inP{border-color:var(--ok);border-width:2px}
+.small{font-size:.9rem;color:var(--muted)}
+footer{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:.4rem}
+/* Referencias que se pueden pulsar y su enunciado */
+button.ref{all:unset;cursor:pointer;color:var(--accent);border-bottom:1px dashed currentColor;font:inherit;white-space:nowrap}
+button.ref:hover{border-bottom-style:solid}
+button.ref:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+button.ref[aria-expanded="true"]{background:var(--accent-soft);border-bottom-style:solid}
+#pop{position:absolute;z-index:20;max-width:min(30rem,calc(100vw - 1.5rem));background:var(--surface);border:1px solid var(--accent);border-left:4px solid var(--accent);border-radius:.4rem;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:.75rem .9rem .8rem;display:none;flex-direction:column;gap:.4rem;font-size:.97rem}
+#pop.show{display:flex}
+#pop .pt{display:flex;justify-content:space-between;align-items:baseline;gap:.75rem}
+#pop .pt b{font-family:var(--font-ui);font-size:.82rem;color:var(--accent)}
+#pop .x{font-family:var(--font-ui);font-size:.8rem;padding:.1rem .45rem}
+.stmt ol{margin:.2rem 0 0;padding-left:1.4rem;display:flex;flex-direction:column;gap:.15rem}
+.stmt ol.rom{list-style:lower-roman}
+details.gloss{background:var(--surface);border:1px solid var(--line);border-radius:.4rem;padding:.6rem .9rem}
+details.gloss summary{font-family:var(--font-ui);font-weight:600;font-size:.92rem;color:var(--accent);cursor:pointer}
+details.gloss[open] summary{margin-bottom:.6rem}
+.gl-group{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.9rem}
+.gl-group h3{color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.gl-item{border-top:1px solid var(--line);padding-top:.45rem;display:flex;flex-direction:column;gap:.15rem}
+.gl-item b{font-family:var(--font-ui);font-size:.82rem;color:var(--accent)}
+.consult{font-family:var(--font-ui);font-size:.82rem;color:var(--muted);line-height:1.9}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <a class="back" href="./">← Todas las prácticas</a>
+  <span class="kicker">Teoría de modelos · Capítulo III, §III.2 y §III.4.1–4.3</span>
+  <h1>Práctica de completud</h1>
+  <div class="statement">
+    <p class="big">Si <span class="m">Γ ⊨ φ</span>, entonces <span class="m">Γ ⊢ φ</span>.</p>
+    <p>Es la otra mitad de la corrección. Seguimos la prueba de Henkin: todo conjunto consistente tiene un modelo, y ese modelo se fabrica con los términos del lenguaje a partir de un conjunto <span class="m">Γ*</span> máximamente consistente y ejemplificado. La parte I practica las piezas de la sesión 5; la parte II, el teorema y su plan de la sesión 6.</p>
+  </div>
+  <details class="gloss" id="glossary">
+    <summary>Enunciados de las definiciones, teoremas y reglas que se usan</summary>
+    <p class="small" style="margin-bottom:.8rem">En toda la práctica puedes pulsar cualquier referencia subrayada, como III.2.5 o (PC), para ver su enunciado al momento. Aquí están todos juntos. Escribimos <span class="m">Γ, ψ ⊢ φ</span> para decir que la secuencia de antecedente Γ, ψ y conclusión φ es derivable.</p>
+    <div id="gl-body"></div>
+  </details>
+</header>
+
+<div class="progress" aria-live="polite">
+  <span id="count">0 de 0</span>
+  <div class="bar"><span id="barfill"></span></div>
+  <nav aria-label="Bloques"><a href="#b1">1</a><a href="#b2">2</a><a href="#b3">3</a><a href="#b4">4</a><a href="#b5">5</a><a href="#b6">6</a><a href="#b7">7</a><a href="#b8">8</a><a href="#b9">9</a></nav>
+</div>
+
+<p class="part">Parte I · Sesión 5 · Completud (1): consistencia máxima y ejemplificación</p>
+
+<section id="b1">
+  <div class="sec-head">
+    <h2>1. Contradictorio y consistente</h2>
+    <p>Definiciones III.2.1 y III.2.2 y sus primeras propiedades. Puedes reintentar; cada pregunta cuenta cuando aciertas.</p>
+  </div>
+  <div id="quiz1" class="stack"></div>
+</section>
+
+<section id="b2">
+  <div class="sec-head">
+    <h2>2. ¿Consistente o contradictorio?</h2>
+    <p>Si encuentras un modelo, el conjunto es consistente por el test de consistencia (III.3.2). Si no lo hay, pulsa «Es contradictorio» y verás la deducción que lo prueba. Ojo: no encontrar un modelo no demuestra nada todavía; eso solo lo dirá la completud.</p>
+  </div>
+  <div id="sets" class="stack"></div>
+</section>
+
+<section id="b3">
+  <div class="sec-head">
+    <h2>3. Dentro o fuera de Δ</h2>
+    <p>En cada caso, <span class="m">Δ</span> es un conjunto <strong>máximamente consistente</strong> del que solo sabes lo que se dice. Usa el teorema III.2.5 para decidir si la fórmula está en <span class="m">Δ</span>, no está, o depende de qué <span class="m">Δ</span> sea.</p>
+  </div>
+  <div id="inout" class="stack"></div>
+</section>
+
+<section id="b4">
+  <div class="sec-head">
+    <h2>4. Justifica la prueba del teorema III.2.5</h2>
+    <p><span class="m">Δ</span> es máximamente consistente. Elige qué justifica cada paso de las pruebas de i) y iii), tal como se hicieron en clase.</p>
+  </div>
+  <div class="card" id="pf-card">
+    <div class="card-top"><span class="tag">Nueve pasos</span><span class="state" id="pf-state">0 de 9</span></div>
+    <h3>i) Si <span class="m">Δ ⊢ φ</span>, entonces <span class="m">φ ∈ Δ</span></h3>
+    <p class="lead-in">Supongamos <span class="m">Δ ⊢ φ</span> y <span class="m">φ ∉ Δ</span>.</p>
+    <p class="consult">Opciones del desplegable: III.2.1 · III.2.3 · el lema (Lema: contradictorio sii…) · (M) · (T) · (IH) · (PC) · III.2.5</p>
+    <ol class="steps" id="pf1"></ol>
+    <h3>iii) <span class="m">¬φ ∈ Δ</span> si y solo si <span class="m">φ ∉ Δ</span></h3>
+    <ol class="steps" id="pf2"></ol>
+    <div class="row"><button class="primary" id="pf-check">Comprobar justificaciones</button></div>
+    <div class="fb" id="pf-fb"></div>
+  </div>
+</section>
+
+<section id="b5">
+  <div class="sec-head">
+    <h2>5. Ejemplificación y testigos frescos</h2>
+    <p><span class="m">Δ</span> es <strong>ejemplificado</strong> si siempre que <span class="m">∃xφ ∈ Δ</span> hay un término τ con <span class="m" id="sx-tau"></span> <span class="m">∈ Δ</span> (definición III.2.4). Sin esto falla la cláusula del particularizador en la «copia semántica».</p>
+  </div>
+  <div id="quiz5" class="stack"></div>
+</section>
+
+<p class="part">Parte II · Sesión 6 · Completud (2): el teorema de Gödel y la estrategia de Henkin</p>
+
+<section id="b6">
+  <div class="sec-head">
+    <h2>6. Corrección y completud</h2>
+    <p>Primero, sitúa cada enunciado en su teorema. Después, unas preguntas sobre lo que dice (y lo que no dice) la completud.</p>
+  </div>
+  <div class="card" id="m6-card">
+    <div class="card-top"><span class="tag">¿Qué teorema es?</span><span class="state" id="m6-state">0 de 5</span></div>
+    <div class="tw"><table class="match" id="m6"></table></div>
+    <div class="row"><button class="primary" id="m6-check">Comprobar</button></div>
+    <div class="fb" id="m6-fb"></div>
+  </div>
+  <div id="quiz6" class="stack"></div>
+</section>
+
+<section id="b7">
+  <div class="sec-head">
+    <h2>7. De Henkin a Gödel, paso a paso</h2>
+    <p>Suponemos el teorema de Henkin (III.4.8) y queremos el de Gödel (III.4.2): si <span class="m">Γ ⊨ φ</span>, entonces <span class="m">Γ ⊢ φ</span>. Elige qué justifica cada paso.</p>
+  </div>
+  <div class="card" id="hg-card">
+    <div class="card-top"><span class="tag">Seis pasos</span><span class="state" id="hg-state">0 de 6</span></div>
+    <p class="lead-in">Supongamos <span class="m">Γ ⊨ φ</span>.</p>
+    <p class="consult">Opciones del desplegable: <button class="ref" data-k="cons">consecuencia y satisfacción de ¬</button> · III.4.8 · III.3.2 · (M) · (IH) · (NC) · (PC) · <button class="ref" data-k="deduc">definición de Γ ⊢ φ</button></p>
+    <ol class="steps" id="hg"></ol>
+    <div class="row"><button class="primary" id="hg-check">Comprobar justificaciones</button></div>
+    <div class="fb" id="hg-fb"></div>
+  </div>
+</section>
+
+<section id="b8">
+  <div class="sec-head">
+    <h2>8. El organigrama de la prueba</h2>
+    <p>El organigrama III.4.1 reparte la prueba en piezas que se demuestran en las sesiones 7, 8 y 9. Empareja cada pieza con lo que dice y decide a qué conjuntos se puede aplicar directamente el lema de Lindenbaum.</p>
+  </div>
+  <div class="card" id="m8-card">
+    <div class="card-top"><span class="tag">Las piezas, en el orden de la prueba</span><span class="state" id="m8-state">0 de 6</span></div>
+    <p class="lead-in">Lo que dice cada pieza:</p>
+    <ol class="letters" id="m8-list"></ol>
+    <div class="tw"><table class="match" id="m8"></table></div>
+    <div class="row"><button class="primary" id="m8-check">Comprobar</button></div>
+    <div class="fb" id="m8-fb"></div>
+  </div>
+  <div id="lind" class="stack"></div>
+</section>
+
+<section id="b9">
+  <div class="sec-head">
+    <h2>9. Un modelo hecho de términos</h2>
+    <p>El lema de Henkin usa los términos como individuos. Con igualdad, se identifican los que <span class="m">Γ*</span> dice que son iguales: el modelo es el cociente <span class="m">𝔅/∼</span>. Aquí <span class="m">L = {0, s, P, =}</span> y miramos solo los términos sin variables, <span class="m">0, s0, ss0, …</span></p>
+  </div>
+  <div class="card" id="explorer">
+    <div class="card-top"><span class="tag">Explorador del cociente</span></div>
+    <p class="small">Elige la igualdad entre términos sin variables que contiene <span class="m">Γ*</span> (suponemos que no identifica más términos que los que esa igualdad obliga) y qué clases están en <span class="m">P</span>. Verás las clases y cómo las mueve <span class="m">s</span>.</p>
+    <div class="ctl"><label for="ex-eq" class="lbl">Γ* contiene</label><select id="ex-eq"></select></div>
+    <div class="ctl" id="ex-p"></div>
+    <div class="classes" id="ex-out" aria-live="polite"></div>
+    <p class="small" id="ex-sum"></p>
+  </div>
+  <div id="quiz9" class="stack"></div>
+</section>
+
+<footer>
+  <span>Referencias al libro de M. Manzano, <em>Teoría de modelos</em>: definiciones III.2.1–2.4, teoremas III.2.5 y III.2.6, problemas 4 y 5 de §III.2; organigrama III.4.1, teorema de Gödel III.4.2, corolario III.4.3, teorema de Henkin III.4.8; test de consistencia III.3.2.</span>
+  <span>Aplicación de <b>Manuel Crescencio Moreno Gómez</b>, dedicada a los lógicos matemáticos de la Universidad de Córdoba · Lógica, 2.º del grado en Matemáticas y Filosofía · Licencia <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">CC BY-SA 4.0</a>.</span>
+</footer>
+</main>
+
+<div id="pop" role="dialog" aria-modal="false" aria-labelledby="pop-t"><div class="pt"><b id="pop-t"></b><button class="x" id="pop-x" aria-label="Cerrar el enunciado">Cerrar</button></div><div class="stmt" id="pop-b"></div></div>
+
+<script id="logic">
+/* ---------- Bloque 2: fórmulas y evaluación (sin DOM) ---------- */
+const CONSTS=['a','b'];
+const P=t=>({k:'P',t}), Q=t=>({k:'Q',t}), R=(a,b)=>({k:'R',a,b}), EQ=(a,b)=>({k:'eq',a,b});
+const not=f=>({k:'not',f}), and=(a,b)=>({k:'and',a,b}), or=(a,b)=>({k:'or',a,b}), imp=(a,b)=>({k:'imp',a,b});
+const all=(v,f)=>({k:'all',v,f}), ex=(v,f)=>({k:'ex',v,f});
+function show(f,top=true){
+  switch(f.k){
+    case 'P': return 'P'+f.t; case 'Q': return 'Q'+f.t; case 'R': return 'R'+f.a+f.b;
+    case 'eq': return top?f.a+' = '+f.b:'('+f.a+' = '+f.b+')';
+    case 'not': return f.f.k==='eq'?'¬'+f.f.a+' = '+f.f.b:'¬'+show(f.f,false);
+    case 'all': return '∀'+f.v+' '+show(f.f,false);
+    case 'ex': return '∃'+f.v+' '+show(f.f,false);
+    default:{ const op={and:' ∧ ',or:' ∨ ',imp:' → '}[f.k]; const s=show(f.a,false)+op+show(f.b,false); return top?s:'('+s+')'; }
+  }
+}
+function val(t,M,env){ return CONSTS.includes(t)?M.c[t]:env[t]; }
+function ev(f,M,env){
+  switch(f.k){
+    case 'P': return M.P.has(val(f.t,M,env));
+    case 'Q': return M.Q.has(val(f.t,M,env));
+    case 'R': return M.R.has(val(f.a,M,env)+','+val(f.b,M,env));
+    case 'eq': return val(f.a,M,env)===val(f.b,M,env);
+    case 'not': return !ev(f.f,M,env);
+    case 'and': return ev(f.a,M,env)&&ev(f.b,M,env);
+    case 'or': return ev(f.a,M,env)||ev(f.b,M,env);
+    case 'imp': return !ev(f.a,M,env)||ev(f.b,M,env);
+    case 'all': for(let e=0;e<M.n;e++){ if(!ev(f.f,M,{...env,[f.v]:e})) return false; } return true;
+    case 'ex': for(let e=0;e<M.n;e++){ if(ev(f.f,M,{...env,[f.v]:e})) return true; } return false;
+  }
+}
+const SETS=[
+ {id:'k1',set:[P('a'),not(Q('a')),all('x',imp(P('x'),Q('x')))],preds:['P','Q'],consts:['a'],contra:true,
+  why:'De ∀x (Px → Qx) se deduce Pa → Qa (se elimina el generalizador con el término a), y con Pa, por modus ponens, Qa. El conjunto deduce Qa y ¬Qa: por el lema, es contradictorio.'},
+ {id:'k2',set:[ex('x',P('x')),not(P('a'))],preds:['P'],consts:['a'],contra:false,size:2,
+  hint:'El testigo de ∃x Px no tiene por qué ser el individuo que denota a.'},
+ {id:'k3',set:[all('x',or(P('x'),Q('x'))),not(P('a')),not(Q('b'))],preds:['P','Q'],consts:['a','b'],contra:false,size:2,
+  hint:'Si a y b denotan el mismo individuo, ese individuo no puede estar ni en P ni en Q. Sepáralos.'},
+ {id:'k4',set:[all('x',ex('y',R('x','y'))),all('x',not(R('x','x')))],preds:['R'],consts:[],contra:false,size:2,
+  hint:'Con un solo elemento es imposible. Con dos, que cada uno esté relacionado con el otro.'},
+ {id:'k5',set:[P('a'),EQ('a','b'),not(P('b'))],preds:['P'],consts:['a','b'],contra:true,
+  why:'De Pa y a = b, por sustitución de iguales (SI), Pb. Con ¬Pb, el conjunto deduce Pb y ¬Pb.'},
+ {id:'k6',set:[ex('x',and(P('x'),not(Q('x')))),all('x',imp(P('x'),Q('x')))],preds:['P','Q'],consts:[],contra:true,
+  why:'∀x (Px → Qx) y ¬∃x (Px ∧ ¬Qx) son deducibles la una de la otra, así que el conjunto deduce ∃x (Px ∧ ¬Qx) y su negación. (Con un testigo fresco y (IPA) se ve paso a paso: de Py ∧ ¬Qy y Py → Qy salen Qy y ¬Qy.)'},
+ {id:'k7',set:[all('x',all('y',imp(R('x','y'),not(R('y','x'))))),ex('x',R('x','x'))],preds:['R'],consts:[],contra:true,
+  why:'Tomando el mismo término para x e y, de la primera se deduce Rzz → ¬Rzz, es decir, ¬Rzz para cualquier z; de ahí ∀x ¬Rxx, que es la negación de ∃x Rxx.'}
+];
+function satisfies(t,M){ return t.set.every(f=>ev(f,M,{})); }
+
+/* ---------- Bloque 9: el cociente de los términos sin variables ---------- */
+/* Γ* contiene s^k 0 = s^j 0 (j < k) y nada más obliga a identificar: s^n0 ∼ s^m0 sii n = m o (n, m ≥ j y n ≡ m mód k − j). */
+function classOf(n,eq){ if(!eq||n<eq.j) return n; return eq.j+((n-eq.j)%(eq.k-eq.j)); }
+function classes(eq,upto){ const cl=new Map(); for(let n=0;n<=upto;n++){ const c=classOf(n,eq); if(!cl.has(c)) cl.set(c,[]); cl.get(c).push(n); } return cl; }
+function nClasses(eq){ return eq?eq.k:Infinity; }
+function term(n){ const sup='⁰¹²³⁴⁵⁶⁷⁸⁹'; return n<=4?'s'.repeat(n)+'0':'s'+String(n).split('').map(d=>sup[+d]).join('')+'0'; }
+
+/* ---------- Enunciados (Manzano, Teoría de modelos) ---------- */
+const SB=(x,t)=>'S<span class="ss"><span>'+t+'</span><span>'+x+'</span></span>';
+const GLOSS={
+ 'III.2.1':{g:0,t:'Definición III.2.1 · Contradictorio',s:'Δ es <b>contradictorio</b> si y solo si Δ ⊢ φ para toda φ ∈ FOR(L).'},
+ 'III.2.2':{g:0,t:'Definición III.2.2 · Consistente',s:'Δ es <b>consistente</b> si y solo si no es contradictorio.'},
+ 'lema':{g:0,t:'Lema · Cómo se reconoce un contradictorio',s:'Δ es contradictorio si y solo si hay una fórmula φ con Δ ⊢ φ y Δ ⊢ ¬φ.'},
+ 'III.2.3':{g:0,t:'Definición III.2.3 · Máximamente consistente',s:'Δ es <b>máximamente consistente</b> si y solo si Δ es consistente y, para cada φ ∈ FOR(L): si φ ∉ Δ, entonces Δ ∪ {φ} es contradictorio.'},
+ 'III.2.4':{g:0,t:'Definición III.2.4 · Ejemplificado',s:'Δ es <b>ejemplificado</b> si y solo si, siempre que ∃xφ ∈ Δ, hay un término τ tal que '+SB('x','τ')+'φ ∈ Δ.'},
+ 'III.2.5':{g:0,t:'Teorema III.2.5 · Consistencia máxima',s:'Si Δ es máximamente consistente:<ol class="rom"><li>si Δ ⊢ φ, entonces φ ∈ Δ;</li><li>si ⊢ φ, entonces φ ∈ Δ;</li><li>¬φ ∈ Δ si y solo si φ ∉ Δ;</li><li>φ ∧ ψ ∈ Δ si y solo si φ ∈ Δ y ψ ∈ Δ;</li><li>φ ∨ ψ ∈ Δ si y solo si φ ∈ Δ o ψ ∈ Δ;</li><li>φ → ψ ∈ Δ si y solo si, si φ ∈ Δ, entonces ψ ∈ Δ;</li><li>φ ↔ ψ ∈ Δ si y solo si (φ ∈ Δ si y solo si ψ ∈ Δ).</li></ol>'},
+ 'III.2.6':{g:0,t:'Teorema III.2.6 · Ejemplificación',s:'Si Δ es máximamente consistente y ejemplificado:<ol class="rom"><li>∃xφ ∈ Δ si y solo si hay un término τ con '+SB('x','τ')+'φ ∈ Δ;</li><li>∀xφ ∈ Δ si y solo si '+SB('x','τ')+'φ ∈ Δ para todo término τ.</li></ol>'},
+ 'p4':{g:0,t:'Problema 4 de §III.2',s:'El conjunto {x = τ : τ ∈ TER(L)} ∪ {∃x∃y ¬x = y} es consistente, pero ningún conjunto consistente que lo contenga es ejemplificado.'},
+ 'p5':{g:0,t:'Problema 5 de §III.2',s:'Si Δ es consistente, ∃xφ ∈ Δ y z ∉ LBR(Δ), entonces Δ ∪ {'+SB('x','z')+'φ} es consistente.'},
+ 'deduc':{g:1,t:'Deducibilidad · Γ ⊢ φ',s:'Γ ⊢ φ si y solo si hay una lista finita Δ de fórmulas de Γ tal que la secuencia Δ φ es derivable (⊢ Δ φ). Solo se usa una parte finita de Γ.'},
+ 'IH':{g:1,t:'(IH) · Introducción de hipótesis',s:'Γ ⊢ φ, si φ está en Γ. (Regla sin premisas.)'},
+ 'M':{g:1,t:'(M) · Monotonía',s:'De Γ ⊢ φ se pasa a Γ′ ⊢ φ, si Γ ⊆ Γ′. Sirve para igualar los antecedentes de dos deducciones.'},
+ 'PC':{g:1,t:'(PC) · Prueba por casos',s:'De Γ, ψ ⊢ φ y Γ, ¬ψ ⊢ φ se pasa a Γ ⊢ φ.'},
+ 'NC':{g:1,t:'(NC) · No contradicción',s:'De Γ, ¬φ ⊢ ψ y Γ, ¬φ ⊢ ¬ψ se pasa a Γ ⊢ φ. Es la reducción al absurdo.'},
+ 'SNC':{g:1,t:'(SNC) · Segunda regla de no contradicción (derivada)',s:'De Γ ⊢ ψ y Γ ⊢ ¬ψ se pasa a Γ ⊢ φ, para cualquier φ.'},
+ 'T':{g:1,t:'(T) · Corte o transitividad (derivada)',s:'De Γ ⊢ φ y Γ, φ ⊢ ψ se pasa a Γ ⊢ ψ.'},
+ 'MP':{g:1,t:'(MP) · Modus ponens (derivada)',s:'De Γ ⊢ φ → ψ y Γ ⊢ φ se pasa a Γ ⊢ ψ.'},
+ 'IDC':{g:1,t:'(IDC) · Disyuntor en el consecuente',s:'De Γ ⊢ φ se pasa a Γ ⊢ φ ∨ ψ (y también a Γ ⊢ ψ ∨ φ).'},
+ 'ED':{g:1,t:'(ED) · Eliminación del disyuntor (derivada)',s:'De Γ ⊢ φ ∨ ψ y Γ ⊢ ¬φ se pasa a Γ ⊢ ψ.'},
+ 'IPC':{g:1,t:'(IPC) · Particularizador en el consecuente',s:'De Γ ⊢ '+SB('x','τ')+'φ se pasa a Γ ⊢ ∃xφ.'},
+ 'IPA':{g:1,t:'(IPA) · Particularizador en el antecedente',s:'De Γ, '+SB('x','y')+'φ ⊢ ψ se pasa a Γ, ∃xφ ⊢ ψ, si y no está libre en Γ, ∃xφ ni ψ.'},
+ 'SI':{g:1,t:'(SI) · Sustitución de iguales',s:'De Γ ⊢ '+SB('x','τ')+'φ se pasa a Γ, τ = τ′ ⊢ '+SB('x','τ′')+'φ.'},
+ 'cons':{g:2,t:'Consecuencia y satisfacción del negador',s:'Γ ⊨ φ si y solo si toda interpretación que es modelo de Γ satisface φ. Y 𝒜ℐ satisface ¬φ si y solo si 𝒜ℐ no satisface φ. Por tanto, Γ ⊨ φ si y solo si Γ ∪ {¬φ} no tiene ningún modelo.'},
+ 'II.4.2':{g:2,t:'Teorema II.4.2 · Sustitución',s:'Para cada fórmula φ: 𝒜ℐ satisface '+SB('x','τ')+'φ si y solo si satisface φ la interpretación que da a x el valor 𝒜ℐ(τ). Sustituir en la fórmula equivale a cambiar la asignación.'},
+ 'III.3.1':{g:2,t:'Teorema III.3.1 · Corrección',s:'Si Γ ⊢ φ, entonces Γ ⊨ φ.'},
+ 'III.3.2':{g:2,t:'Teorema III.3.2 · Test de consistencia',s:'Si Γ es satisfacible (tiene un modelo), entonces Γ es consistente.'},
+ 'III.4.1':{g:3,t:'III.4.1 · Organigrama de la completud',s:'Lindenbaum (III.4.4) y el lema de Henkin (III.4.5) dan el corolario III.4.6; con el lema III.4.7 se llega al teorema de Henkin (III.4.8), y de él salen el teorema de Gödel (III.4.2), la compacidad y Löwenheim-Skolem.'},
+ 'III.4.2':{g:3,t:'Teorema III.4.2 · Completud (Gödel)',s:'Si Γ ⊨ φ, entonces Γ ⊢ φ (con Γ ∪ {φ} ⊆ FOR(L) y L numerable).'},
+ 'III.4.3':{g:3,t:'Corolario III.4.3',s:'Si ⊨ φ, entonces ⊢ φ: toda fórmula válida es un teorema lógico.'},
+ 'III.4.4':{g:3,t:'Lema III.4.4 · Lindenbaum',s:'Si Γ es consistente y LBR(Γ) es finito, hay un Γ* ⊇ Γ máximamente consistente y ejemplificado.'},
+ 'III.4.5':{g:3,t:'Lema III.4.5 · Henkin',s:'Todo Γ* máximamente consistente y ejemplificado tiene un modelo numerable: el de sus términos, identificados cuando Γ* dice que son iguales.'},
+ 'III.4.6':{g:3,t:'Corolario III.4.6',s:'Si Γ es consistente y LBR(Γ) es finito, Γ tiene un modelo.'},
+ 'III.4.7':{g:3,t:'Lema III.4.7',s:'Las variables libres de Γ se pueden sustituir por constantes nuevas sin perder la consistencia; así se prescinde de que LBR(Γ) sea finito.'},
+ 'III.4.8':{g:3,t:'Teorema III.4.8 · Henkin',s:'Si Γ ⊆ FOR(L) es consistente, Γ tiene un modelo numerable.'}
+};
+const GROUPS=['Sesión 5 · Definiciones y teoremas de §III.2','Deducciones y reglas del cálculo (§III.1)','Semántica, corrección y test de consistencia','Sesión 6 · El teorema de completud (§III.4)'];
+/* Qué texto se convierte en referencia: devuelve la clave de GLOSS o null */
+const REF_RE=/\(?(II|III)\.(\d+)\.(\d+)(?:\.[ivx]+\))?\)?|\((IH|M|PC|NC|SNC|T|MP|IDC|ED|IPC|IPA|SI)\)|[Pp]roblema ([45])\b|por el lema\b|Lema:|modus ponens|teorema de sustitución/g;
+function refKey(mt){
+  if(mt[1]) return mt[1]+'.'+mt[2]+'.'+mt[3];
+  if(mt[4]) return mt[4];
+  if(mt[5]) return 'p'+mt[5];
+  if(/lema/i.test(mt[0])) return 'lema';
+  if(mt[0]==='modus ponens') return 'MP';
+  if(mt[0]==='teorema de sustitución') return 'II.4.2';
+  return null;
+}
+if(typeof module!=='undefined'){ module.exports={SETS,ev,show,satisfies,classOf,classes,nClasses,term,GLOSS,REF_RE,refKey}; }
+</script>
+
+<script>
+/* ---------- Progreso ---------- */
+const solved=new Set(); let TOTAL=0;
+function mark(id){ solved.add(id); refresh(); }
+function refresh(){
+  document.getElementById('count').textContent=solved.size+' de '+TOTAL;
+  document.getElementById('barfill').style.width=(TOTAL?100*solved.size/TOTAL:0)+'%';
+}
+const $=id=>document.getElementById(id);
+const el=(tag,cls,html)=>{const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e;};
+const S=(x,t)=>'S<span class="ss"><span>'+t+'</span><span>'+x+'</span></span>';
+const m=s=>'<span class="m">'+s+'</span>';
+$('sx-tau').innerHTML=S('x','τ')+'φ';
+
+/* Preguntas de opción única (bloques 1, 5, 6, 9) y de tres botones (bloques 3 y 8) */
+function buildQuiz(host,list,prefix,opts={}){
+  list.forEach((it,i)=>{
+    TOTAL++;
+    const id=prefix+i;
+    const c=el('div','card');
+    c.append(el('div','card-top','<span class="tag">'+(opts.label?opts.label(i):'Pregunta '+(i+1))+'</span><span class="state">Pendiente</span>'));
+    if(it.given) c.append(el('div','given m',it.given));
+    c.append(el('p',null,it.q));
+    const box=el('div','opts'+(opts.row?' row3':'')); const fb=el('div','fb');
+    (it.o||opts.o).forEach((o,j)=>{
+      const b=el('button',null,o); b.id=id+'o'+j;
+      b.addEventListener('click',()=>{
+        box.querySelectorAll('button').forEach(x=>x.classList.remove('right','wrong'));
+        if(j===it.a){ b.classList.add('right'); fb.className='fb show ok'; fb.innerHTML=it.why; c.classList.add('done'); c.querySelector('.state').textContent='Resuelta'; mark(id); }
+        else{ b.classList.add('wrong'); fb.className='fb show no'; fb.innerHTML=it.no||'No es esa. Prueba otra opción.'; }
+      });
+      box.append(b);
+    });
+    c.append(box,fb); host.append(c);
+  });
+}
+/* Listas de pasos con justificación (bloques 4 y 7) */
+function buildSteps(hosts,options,stateId,btnId,fbId,cardId,okMsg,hint){
+  const all=[];
+  hosts.forEach(([host,list,prefix])=>list.forEach((s,i)=>{
+    TOTAL++;
+    const li=el('li'); li.append(el('div',null,s.t));
+    const sel=el('select'); sel.id=prefix+i; sel.setAttribute('aria-label','Justificación del paso');
+    sel.append(new Option('Elige…',''));
+    options.forEach((o,j)=>sel.append(new Option(o,j)));
+    li.append(sel); $(host).append(li); all.push({...s,sel,li,id:prefix+i});
+  }));
+  $(btnId).addEventListener('click',()=>{
+    let ok=0;
+    all.forEach(s=>{ s.li.classList.remove('right','wrong'); if(s.sel.value==='') return;
+      if(+s.sel.value===s.a){ s.li.classList.add('right'); ok++; mark(s.id); } else s.li.classList.add('wrong'); });
+    $(stateId).textContent=ok+' de '+all.length;
+    const fb=$(fbId);
+    if(ok===all.length){ $(cardId).classList.add('done'); fb.className='fb show ok'; fb.innerHTML=okMsg; }
+    else{ fb.className='fb show no'; fb.innerHTML='Hay '+(all.length-ok)+' sin acertar o sin elegir. '+hint; }
+  });
+}
+/* Tablas de emparejar (bloques 6 y 8) */
+function buildMatch(tableId,rows,options,stateId,btnId,fbId,cardId,okMsg,prefix){
+  const tb=$(tableId); const sels=[];
+  rows.forEach((r,i)=>{
+    TOTAL++;
+    const tr=el('tr'); tr.append(el('td',null,r.t));
+    const td=el('td'); const sel=el('select'); sel.id=prefix+i; sel.setAttribute('aria-label','Empareja');
+    sel.append(new Option('Elige…','')); options.forEach((o,j)=>sel.append(new Option(o,j)));
+    td.append(sel); tr.append(td); tb.append(tr); sels.push({sel,tr,a:r.a,id:prefix+i});
+  });
+  $(btnId).addEventListener('click',()=>{
+    let ok=0;
+    sels.forEach(s=>{ s.tr.classList.remove('right','wrong'); if(s.sel.value==='') return;
+      if(+s.sel.value===s.a){ s.tr.classList.add('right'); ok++; mark(s.id); } else s.tr.classList.add('wrong'); });
+    $(stateId).textContent=ok+' de '+sels.length;
+    const fb=$(fbId);
+    if(ok===sels.length){ $(cardId).classList.add('done'); fb.className='fb show ok'; fb.innerHTML=okMsg; }
+    else{ fb.className='fb show no'; fb.innerHTML='Quedan '+(sels.length-ok)+' por acertar.'; }
+  });
+}
+
+/* ---------- Bloque 1 ---------- */
+buildQuiz($('quiz1'),[
+ {q:'Según la definición III.2.1, '+m('Δ')+' es contradictorio si y solo si:',
+  o:[m('Δ ⊢ φ')+' para <strong>toda</strong> fórmula φ.',m('Δ')+' no tiene ningún modelo.',m('Δ ⊢ φ')+' para alguna fórmula φ.'],a:0,
+  why:'Es una noción sintáctica: el cálculo deduce todo. «No tener modelo» es semántica; que las dos cosas coincidan es justamente lo que afirma la completud (sesión 6).'},
+ {q:'Lema: '+m('Δ')+' es contradictorio si y solo si hay una φ con '+m('Δ ⊢ φ')+' y '+m('Δ ⊢ ¬φ')+'. Para la dirección (⇐), una vez igualados los antecedentes con (M), ¿qué regla da cualquier ψ?',
+  o:['(SNC)','(IDC)','(IH)'],a:0,
+  why:'De '+m('Γ φ')+' y '+m('Γ ¬φ')+', la regla derivada (SNC) da '+m('Γ ψ')+' para cualquier ψ. Antes hay que igualar los antecedentes de las dos deducciones con (M), porque cada una usa su propia lista finita de Δ.'},
+ {q:'Si '+m('Δ')+' es consistente y '+m('Γ ⊆ Δ')+', entonces:',
+  o:[m('Γ')+' es consistente.',m('Γ')+' puede ser contradictorio.',m('Γ')+' es consistente solo si es finito.'],a:0,
+  why:'Si Γ dedujera todo, con (M) también lo deduciría Δ, que tiene más hipótesis. Es el ejercicio 3 de III.2.7.'},
+ {q:'Si '+m('Δ ∪ {¬φ}')+' es contradictorio, ¿qué se sigue?',
+  o:[m('Δ ⊢ φ'),m('Δ ⊢ ¬φ'),m('Δ')+' es contradictorio.'],a:0,
+  why:'Δ ∪ {¬φ} deduce ψ y ¬ψ; con una lista finita Γ de Δ, '+m('Γ ¬φ ψ')+' y '+m('Γ ¬φ ¬ψ')+', y por (NC), '+m('Γ φ')+'. Es la reducción al absurdo sintáctica, la que se usa en la sesión 6 para pasar de Henkin a Gödel.'},
+ {q:'¿Es consistente '+m('∅')+'? ¿Y '+m('FOR(L)')+'?',
+  o:[m('∅')+' sí, porque es satisfacible; '+m('FOR(L)')+' no.',m('∅')+' no, porque sin premisas no se deduce nada.','Los dos son consistentes.'],a:0,
+  why:'Cualquier interpretación es modelo de ∅, así que es consistente por el test de consistencia: el cálculo no deduce todo. FOR(L) contiene φ y ¬φ. Ojo con la segunda opción: sin premisas sí se deducen cosas, los teoremas lógicos.'},
+ {q:'Al terminar la sesión 5, ¿qué sabemos ya sobre consistencia y satisfacibilidad?',
+  o:['Satisfacible ⇒ consistente.','Consistente ⇒ satisfacible.','Las dos implicaciones.'],a:0,
+  why:'Es el test de consistencia (III.3.2), consecuencia de la corrección. La otra dirección es el teorema de Henkin, y es lo que falta demostrar.'}
+],'q1');
+
+/* ---------- Bloque 2 ---------- */
+(function(){
+  const box=$('sets');
+  SETS.forEach((t,i)=>{
+    TOTAL++;
+    const M={n:2,P:new Set(),Q:new Set(),R:new Set(),c:{a:0,b:0}};
+    const c=el('div','card');
+    c.append(el('div','card-top','<span class="tag">Conjunto '+(i+1)+'</span><span class="state">Pendiente</span>'));
+    c.append(el('div','given m','{ '+t.set.map(f=>'<span class="m">'+show(f)+'</span>').join(', ')+' }'));
+    const grid=el('div','model'); const left=el('div','panel'); const right=el('div','panel');
+    left.append(el('h3',null,'Sistema'));
+    const ctl=el('div'); ctl.style.display='flex'; ctl.style.flexDirection='column'; ctl.style.gap='.5rem'; left.append(ctl);
+    right.append(el('h3',null,'Valores de verdad'));
+    const truth=el('ul','truth'); right.append(truth);
+    const fb=el('div','fb');
+    function drawCtl(){
+      ctl.innerHTML='';
+      const u=el('div','ctl','<span class="lbl">Universo</span>');
+      const sel=el('select'); sel.id=t.id+'-n'; sel.setAttribute('aria-label','Tamaño del universo');
+      [1,2,3].forEach(k=>sel.append(new Option('{'+[...Array(k).keys()].join(', ')+'}',k)));
+      sel.value=M.n;
+      sel.addEventListener('change',()=>{ M.n=+sel.value; ['P','Q'].forEach(p=>M[p]=new Set([...M[p]].filter(e=>e<M.n)));
+        M.R=new Set([...M.R].filter(s=>s.split(',').every(e=>+e<M.n))); CONSTS.forEach(k=>{ if(M.c[k]>=M.n) M.c[k]=0; }); drawCtl(); drawTruth(); });
+      u.append(sel); ctl.append(u);
+      t.consts.forEach(k=>{
+        const r=el('div','ctl','<span class="lbl">'+k+' denota</span>');
+        const s=el('select'); s.id=t.id+'-c'+k; s.setAttribute('aria-label','Denotación de '+k);
+        for(let e=0;e<M.n;e++) s.append(new Option(e,e));
+        s.value=M.c[k]; s.addEventListener('change',()=>{ M.c[k]=+s.value; drawTruth(); });
+        r.append(s); ctl.append(r);
+      });
+      t.preds.filter(p=>p!=='R').forEach(p=>{
+        const r=el('div','ctl','<span class="lbl">'+p+' contiene</span>');
+        for(let e=0;e<M.n;e++){
+          const b=el('button','chip',String(e)); b.id=t.id+'-'+p+e; b.setAttribute('aria-pressed',M[p].has(e));
+          b.addEventListener('click',()=>{ M[p].has(e)?M[p].delete(e):M[p].add(e); b.setAttribute('aria-pressed',M[p].has(e)); drawTruth(); });
+          r.append(b);
+        }
+        ctl.append(r);
+      });
+      if(t.preds.includes('R')){
+        const r=el('div','ctl','<span class="lbl">R contiene ⟨fila, columna⟩</span>');
+        const tb=el('table','rel'); let h='<tr><th></th>'; for(let b=0;b<M.n;b++) h+='<th>'+b+'</th>'; tb.innerHTML=h+'</tr>';
+        for(let a=0;a<M.n;a++){
+          const tr=el('tr',null,'<th>'+a+'</th>');
+          for(let b=0;b<M.n;b++){
+            const td=el('td'); const cb=el('input'); cb.type='checkbox'; cb.id=t.id+'-R'+a+b; cb.checked=M.R.has(a+','+b);
+            cb.setAttribute('aria-label','⟨'+a+', '+b+'⟩ en R');
+            cb.addEventListener('change',()=>{ cb.checked?M.R.add(a+','+b):M.R.delete(a+','+b); drawTruth(); });
+            td.append(cb); tr.append(td);
+          }
+          tb.append(tr);
+        }
+        r.append(tb); ctl.append(r);
+      }
+    }
+    function drawTruth(){
+      truth.innerHTML='';
+      t.set.forEach(f=>{ const v=ev(f,M,{}); truth.append(el('li',null,'<span>'+m(show(f))+'</span><span class="tv '+(v?'t':'f')+'">'+(v?'verdadera':'falsa')+'</span>')); });
+    }
+    const done=html=>{ fb.className='fb show ok'; fb.innerHTML=html; c.classList.add('done'); c.querySelector('.state').textContent='Resuelto'; mark(t.id); };
+    const row=el('div','row');
+    const b1=el('button','primary','Comprobar modelo'); b1.id=t.id+'-check';
+    b1.addEventListener('click',()=>{
+      if(satisfies(t,M)) done('Es un modelo de todo el conjunto. Por el test de consistencia (III.3.2), el conjunto es <strong>consistente</strong>.');
+      else{ fb.className='fb show no'; fb.innerHTML='Alguna fórmula es falsa en tu sistema, así que no es un modelo. '+(t.contra?'¿Seguro que existe alguno?':'Sigue probando.'); }
+    });
+    const b2=el('button',null,'Es contradictorio'); b2.id=t.id+'-contra';
+    b2.addEventListener('click',()=>{
+      if(t.contra) done('Correcto. '+t.why);
+      else{ fb.className='fb show no'; fb.innerHTML='No lo es: tiene un modelo de '+t.size+' elementos. Búscalo.'; }
+    });
+    const b3=el('button',null,'Pista'); b3.id=t.id+'-hint';
+    b3.addEventListener('click',()=>{ fb.className='fb show no'; fb.innerHTML=t.contra?'Intenta deducir una fórmula y su negación a partir del conjunto.':t.hint; });
+    row.append(b1,b2,b3);
+    grid.append(left,right); c.append(grid,row,fb); box.append(c);
+    drawCtl(); drawTruth();
+  });
+})();
+
+/* ---------- Bloque 3 ---------- */
+buildQuiz($('inout'),[
+ {given:'Pa ∨ Qa ∈ Δ, &nbsp; ¬Pa ∈ Δ',q:'¿'+m('Qa')+'?',a:0,
+  why:'Por iii), '+m('Pa ∉ Δ')+'. Por v), como '+m('Pa ∨ Qa ∈ Δ')+', alguno de los dos está, así que '+m('Qa ∈ Δ')+'.'},
+ {given:'¬(Pa ∧ Qa) ∈ Δ, &nbsp; Pa ∈ Δ',q:'¿'+m('Qa')+'?',a:1,
+  why:'Por iii), '+m('Pa ∧ Qa ∉ Δ')+'. Por iv), no pueden estar los dos, y Pa sí está: luego '+m('Qa ∉ Δ')+' (y '+m('¬Qa ∈ Δ')+').'},
+ {given:'Pa → Qa ∈ Δ, &nbsp; ¬Qa ∈ Δ',q:'¿'+m('Pa')+'?',a:1,
+  why:'Por iii), '+m('Qa ∉ Δ')+'. Por vi), si Pa estuviera, también estaría Qa. Luego '+m('Pa ∉ Δ')+': es el modus tollens dentro de Δ.'},
+ {given:'Pa ∈ Δ',q:'¿'+m('Pa ∨ Qb')+'?',a:0,
+  why:'Por v), dirección (⇐): basta con que esté uno de los disyuntos. (O por i): Δ ⊢ Pa ∨ Qb con (IDC).)'},
+ {given:'Pa ∉ Δ',q:'¿'+m('¬¬Pa')+'?',a:1,
+  why:'Por iii), '+m('¬Pa ∈ Δ')+'. Aplicando otra vez iii) a ¬Pa: como ¬Pa está, su negación '+m('¬¬Pa')+' no está.'},
+ {given:'(no sabes nada más de Δ)',q:'¿'+m('Pa ∨ ¬Pa')+'?',a:0,
+  why:'Es un teorema lógico, '+m('⊢ Pa ∨ ¬Pa')+', y por ii) todo conjunto máximamente consistente contiene todos los teoremas.'},
+ {given:'Pa ∨ Qa ∈ Δ',q:'¿'+m('Pa')+'?',a:2,
+  why:'Por v), está Pa o está Qa, pero no se sabe cuál. Hay conjuntos máximamente consistentes con Pa y sin Qa, y otros al revés (por ejemplo, los conjuntos de verdades de dos interpretaciones distintas).'},
+ {given:'Pa ∈ Δ, &nbsp; a = b ∈ Δ',q:'¿'+m('Pb')+'?',a:0,
+  why:'Δ ⊢ Pb por (SI), y por i) Δ contiene todo lo que deduce. Así se hereda la igualdad en el modelo de términos de la sesión 6.'}
+],'q3',{row:true,o:['Está en Δ','No está en Δ','Depende de Δ'],label:i=>'Caso '+(i+1),no:'No. Repasa qué apartado del teorema III.2.5 se aplica.'});
+
+/* ---------- Bloque 4 ---------- */
+const JUST4=['Definición III.2.3 (máximamente consistente)','Definición III.2.1 (contradictorio)','Lema: contradictorio sii deduce una fórmula y su negación','Regla (M), para tomar una misma lista finita Γ de Δ','Regla (T)','Regla (IH)','Regla (PC)','Apartado i) del teorema'];
+buildSteps([
+ ['pf1',[
+  {t:'Como '+m('φ ∉ Δ')+', el conjunto '+m('Δ ∪ {φ}')+' es contradictorio: deduce cualquier ψ.',a:0},
+  {t:'Hay una lista finita Γ de Δ con '+m('⊢ Γ φ')+' (porque Δ ⊢ φ) y '+m('⊢ Γ φ ψ')+' (por la contradicción).',a:3},
+  {t:'De '+m('Γ φ')+' y '+m('Γ φ ψ')+' se obtiene '+m('Γ ψ')+'.',a:4},
+  {t:'Como ψ era cualquiera, Δ deduce todo y sería contradictorio, en contra de que es consistente.',a:1}],'pf1-'],
+ ['pf2',[
+  {t:'(⇒) Si φ y ¬φ estuvieran las dos en Δ, Δ sería contradictorio. Luego, si '+m('¬φ ∈ Δ')+', '+m('φ ∉ Δ')+'.',a:2},
+  {t:'(⇐) Si '+m('φ ∉ Δ')+', '+m('Δ ∪ {φ}')+' es contradictorio; en particular, hay Γ en Δ con '+m('⊢ Γ φ ¬φ')+'.',a:0},
+  {t:'Además, '+m('⊢ Γ ¬φ ¬φ')+'.',a:5},
+  {t:'De las dos secuencias anteriores, '+m('⊢ Γ ¬φ')+'.',a:6},
+  {t:'Por tanto, '+m('¬φ ∈ Δ')+'.',a:7}],'pf2-']
+],JUST4,'pf-state','pf-check','pf-fb','pf-card',
+'Todo correcto. Fíjate en que i) se usa en la prueba de iii): una vez que sabemos que Δ contiene lo que deduce, cada apartado del teorema se reduce a una deducción corta.',
+'Pista: (T) encadena dos deducciones; (PC) distingue dos casos, φ y ¬φ, que llevan a la misma conclusión.');
+
+/* ---------- Bloque 5 ---------- */
+buildQuiz($('quiz5'),[
+ {given:'Δ = { ∃x Px, Pa }',q:'¿Es '+m('Δ')+' ejemplificado?',o:['Sí','No'],a:0,
+  why:'La única fórmula particular es ∃x Px, y su instancia '+m(S('x','a')+'Px = Pa')+' está en Δ.'},
+ {given:'Δ = { ∃x Px, ¬Pa }',q:'¿Es '+m('Δ')+' ejemplificado?',o:['Sí','No'],a:1,
+  why:'Haría falta algún término τ con Pτ en Δ, y no hay ninguno. El conjunto es consistente, pero dice «algo es P» sin decir qué.'},
+ {given:'Δ = { ∃x ∃y Rxy, ∃y Ray, Rab }',q:'¿Es '+m('Δ')+' ejemplificado?',o:['Sí','No'],a:0,
+  why:'∃x∃y Rxy tiene la instancia ∃y Ray (τ = a), y ∃y Ray tiene la instancia Rab (τ = b). Cada particular de Δ tiene su testigo dentro de Δ.'},
+ {given:'L tiene una sola constante, a, e =. Sistema: A = {0, 1}, a denota 0 y la asignación ℐ da el valor 0 a todas las variables. Δ = {φ : 𝒜ℐ sat φ}.',
+  q:m('Δ')+' es máximamente consistente (actividad 2 de clase). ¿Es ejemplificado?',o:['Sí','No'],a:1,
+  why:'∃x ¬x = a está en Δ (el 1 es distinto del 0), pero cada término, a o una variable, denota 0, así que ninguna instancia ¬τ = a está en Δ. Máximamente consistente no implica ejemplificado: al 1 no lo nombra ningún término.'},
+ {given:'El mismo sistema, pero ahora ℐ da a la variable y el valor 1 (y 0 a las demás).',
+  q:'¿Es ejemplificado '+m('Δ = {φ : 𝒜ℐ sat φ}')+'?',o:['Sí','No'],a:0,
+  why:'Ahora cada individuo tiene nombre: el 0 lo denota a y el 1 lo denota y. Si ∃xφ está en Δ, el testigo es 0 o 1, y por el teorema de sustitución la instancia con el término que lo nombra está en Δ. En general, Δ es ejemplificado justo cuando todo individuo es denotado por algún término.'},
+ {given:'Γ = { x = τ : τ ∈ TER(L) } ∪ { ∃x ∃y ¬x = y }',q:'Es el problema 4 de §III.2. ¿Qué ocurre?',
+  o:['Γ es consistente, pero ningún superconjunto consistente suyo es ejemplificado.','Γ es contradictorio.','Γ es consistente y se puede ampliar a uno máximamente consistente y ejemplificado.'],a:0,
+  why:'Tiene un modelo de dos elementos en el que todo término denota el primero. Pero si Γ* ⊇ Γ fuera ejemplificado, habría términos τ y σ con ¬τ = σ en Γ*, mientras que x = τ y x = σ dan τ = σ. Todas las variables están comprometidas con x: no queda ningún nombre libre para un testigo nuevo.'},
+ {q:'Problema 5: si Δ es consistente, '+m('∃xφ ∈ Δ')+' y '+m('z ∉ LBR(Δ)')+', entonces '+m('Δ ∪ {'+S('x','z')+'φ}')+' es consistente. ¿Por qué hace falta que z no esté libre en Δ?',
+  o:['Para poder aplicar (IPA) con z, que exige una variable que no esté libre en el resto de la secuencia.','Para que '+m(S('x','z')+'φ')+' sea una sentencia.','Para que Δ sea finito.'],a:0,
+  why:'La prueba supone Δ ∪ {'+S('x','z')+'φ} contradictorio, saca ¬∃xφ con (IPA) usando z como variable fresca, y llega a que Δ es contradictorio. Es la condición que fallaba en el problema 4, y la razón de que el lema de Lindenbaum pida LBR(Γ) finito.'},
+ {q:'En la «copia semántica», ¿qué cláusula de la definición de satisfacción no se puede copiar sin ejemplificación?',
+  o:['La del negador.','La del disyuntor.','La del particularizador.'],a:2,
+  why:'III.2.5 copia ¬, ∨, ∧, → y ↔. Para ∃ hace falta III.2.6: con ejemplificación, ∃xφ ∈ Δ sii hay un término τ con '+S('x','τ')+'φ ∈ Δ, con términos en lugar de individuos.'}
+],'q5',{label:i=>'Pregunta '+(i+1)});
+
+/* ---------- Bloque 6 ---------- */
+const THMS=['Corrección (III.3.1)','Test de consistencia (III.3.2)','Completud de Gödel (III.4.2)','Teorema de Henkin (III.4.8)','Incompletitud de Gödel (1931)'];
+buildMatch('m6',[
+ {t:m('Γ ⊢ φ ⇒ Γ ⊨ φ'),a:0},
+ {t:'Todo conjunto satisfacible es consistente.',a:1},
+ {t:m('Γ ⊨ φ ⇒ Γ ⊢ φ'),a:2},
+ {t:'Todo conjunto consistente tiene un modelo (numerable).',a:3},
+ {t:'Hay enunciados verdaderos en ℕ que los axiomas de la aritmética no deciden.',a:4}
+],THMS,'m6-state','m6-check','m6-fb','m6-card',
+'Correcto. Las dos primeras filas van en una dirección y las dos siguientes en la contraria; juntas dicen que ⊢ y ⊨ coinciden. La última es otro teorema, de 1931, y habla de una teoría y de un modelo concreto, no del cálculo.','m6-');
+buildQuiz($('quiz6'),[
+ {q:'Hemos visto Henkin ⇒ Gödel. Para la recíproca, supón que Γ no tiene modelos. ¿Qué se sigue?',
+  o:[m('Γ ⊨ ψ')+' para toda ψ; por Gödel, '+m('Γ ⊢ ψ')+' para toda ψ: Γ es contradictorio.','Que Γ es consistente, por el test de consistencia.','Nada: Gödel solo habla de fórmulas válidas.'],a:0,
+  why:'Sin modelos, no hay ningún modelo de Γ que falsifique ψ. Por contraposición: consistente ⇒ tiene modelo. Con la corrección, Gödel y Henkin son dos caras de lo mismo.'},
+ {q:'Sabemos que '+m('⊨ ∃x (Px → ∀y Py)')+'. ¿Qué nos garantiza el corolario III.4.3?',
+  o:['Que existe una deducción sin hipótesis de esa fórmula.','Que nos da la deducción.','Nada, porque la fórmula tiene un cuantificador anidado.'],a:0,
+  why:'Si ⊨ φ, entonces ⊢ φ: la deducción existe antes de encontrarla. El teorema no la construye; buscarla es trabajo de prácticas.'},
+ {q:'¿Por qué el teorema de Henkin dice «consistente» y no «satisfacible»?',
+  o:['Porque con «satisfacible» sería trivial: si tiene modelo, tiene modelo.','Porque «consistente» es más fuerte que «satisfacible».','Porque así se puede aplicar a conjuntos infinitos.'],a:0,
+  why:'Lo valioso es pasar de una propiedad sintáctica (no se deduce todo) a una semántica (hay un modelo), y además numerable.'},
+ {q:'¿La completud nos da un procedimiento para decidir si una fórmula es válida?',
+  o:['No: asegura que si es válida hay una deducción, pero no dice cómo encontrarla ni qué hacer si no es válida.','Sí: basta con buscar la deducción.','Sí, pero solo para sentencias.'],a:0,
+  why:'Garantiza la existencia de deducciones. Buscarlas una a una solo termina si la fórmula es válida; si no lo es, la búsqueda puede no acabar nunca.'},
+ {q:'Usando corrección y completud a la vez, ¿qué se puede afirmar de un conjunto Γ cualquiera?',
+  o:['Γ es consistente si y solo si es satisfacible.','Γ es consistente si y solo si es finito.','Γ es satisfacible si y solo si contiene todos los teoremas.'],a:0,
+  why:'Satisfacible ⇒ consistente es el test de consistencia (corrección); consistente ⇒ satisfacible es Henkin (completud). Es el ejercicio b) para casa de la sesión 6.'}
+],'q6');
+
+/* ---------- Bloque 7 ---------- */
+const JUST7=['Definición de consecuencia y de satisfacción de ¬','Teorema de Henkin (III.4.8)','Test de consistencia (III.3.2)','Un contradictorio deduce cualquier fórmula; con (M) se ajusta el antecedente','Regla (IH)','Regla (NC)','Regla (PC)','Definición de Γ ⊢ φ (basta una lista finita de Γ)'];
+buildSteps([
+ ['hg',[
+  {t:m('Γ ∪ {¬φ}')+' no tiene ningún modelo.',a:0},
+  {t:m('Γ ∪ {¬φ}')+' es contradictorio.',a:1},
+  {t:'Hay una lista finita Δ de Γ con '+m('⊢ Δ ¬φ φ')+'.',a:3},
+  {t:m('⊢ Δ φ φ')+'.',a:4},
+  {t:m('⊢ Δ φ')+'.',a:6},
+  {t:m('Γ ⊢ φ')+'.',a:7}],'hg-']
+],JUST7,'hg-state','hg-check','hg-fb','hg-card',
+'Todo correcto. El paso 2 es Henkin leído al revés (si no tiene modelo, no es consistente), y los pasos 4 y 5 son la reducción al absurdo sintáctica: φ se sigue tanto de φ como de ¬φ, y (PC) junta los dos casos.',
+'Pista: (PC) es la prueba por casos; (IH) da secuencias cuya conclusión está en el antecedente.');
+
+/* ---------- Bloque 8 ---------- */
+const PIECES=[
+ 'Γ consistente y LBR(Γ) finito ⇒ hay Γ* ⊇ Γ máximamente consistente y ejemplificado',
+ 'Γ* máximamente consistente y ejemplificado ⇒ Γ* tiene un modelo numerable',
+ 'Γ consistente y LBR(Γ) finito ⇒ Γ tiene un modelo',
+ 'Las variables libres de Γ se pueden sustituir por constantes nuevas sin perder la consistencia',
+ 'Γ consistente ⇒ Γ tiene un modelo numerable',
+ 'Γ ⊨ φ ⇒ Γ ⊢ φ'
+];
+PIECES.forEach((x,i)=>$('m8-list').append(el('li',null,'<b>'+'ABCDEF'[i]+'</b><span>'+x+'</span>')));
+buildMatch('m8',[
+ {t:'Lema de Lindenbaum (III.4.4) · sesión 7',a:0},
+ {t:'Lema de Henkin (III.4.5) · sesión 8',a:1},
+ {t:'Corolario (III.4.6) · sesión 9',a:2},
+ {t:'Lema (III.4.7) · sesión 9',a:3},
+ {t:'Teorema de Henkin (III.4.8) · sesión 9',a:4},
+ {t:'Teorema de Gödel (III.4.2)',a:5}
+],PIECES.map((x,i)=>'ABCDEF'[i]),'m8-state','m8-check','m8-fb','m8-card',
+'Correcto. Manzano lo explica del final al principio: Henkin ⇒ Gödel; corolario ⇒ Henkin, en cuanto se prescinde de que LBR(Γ) sea finito (lema III.4.7); y Lindenbaum + lema de Henkin ⇒ corolario, de forma inmediata.','m8-');
+buildQuiz($('lind'),[
+ {given:'Γ = { ∀x Px, ∃y ¬Qy }',q:'¿Se le puede aplicar directamente el lema de Lindenbaum?',a:0,
+  why:'Son sentencias: LBR(Γ) = ∅, que es finito.'},
+ {given:'Γ = { Px, Qy, Rxy }',q:'¿Se le puede aplicar directamente el lema de Lindenbaum?',a:0,
+  why:'LBR(Γ) = {x, y} es finito: quedan infinitas variables frescas para los testigos.'},
+ {given:'Γ = { Px₀, Px₁, Px₂, … }',q:'¿Se le puede aplicar directamente el lema de Lindenbaum?',a:1,
+  why:'Es consistente, pero todas las variables están libres en Γ. Para estos casos está el lema III.4.7: se cambian las variables libres por constantes nuevas.'},
+ {given:'Γ = { Pa, Pfa, Pffa, … }',q:'¿Se le puede aplicar directamente el lema de Lindenbaum?',a:0,
+  why:'Es infinito, pero son sentencias: LBR(Γ) = ∅. Lo que cuenta es que queden variables libres sin usar, no el tamaño de Γ.'},
+ {q:'¿Dónde se usa que el lenguaje L sea numerable?',
+  o:['Para enumerar todas las fórmulas, φ₀, φ₁, …, y recorrerlas una a una en la construcción de Lindenbaum.','Para que el cálculo sea correcto.','Para que haya constantes.'],a:0,
+  why:'La cadena Γ₀ ⊆ Γ₁ ⊆ … decide las fórmulas una a una. Con un lenguaje más grande hace falta un buen orden (axioma de elección). Y como TER(L) es numerable, el modelo de términos también lo es.'}
+],'q8',{row:true,o:['Sí','No'],label:i=>i<4?'Conjunto '+(i+1):'Pregunta'});
+
+/* ---------- Bloque 9 ---------- */
+(function(){
+  const EQS=[null,{k:2,j:0},{k:3,j:0},{k:3,j:1},{k:4,j:2},{k:5,j:3}];
+  const sel=$('ex-eq');
+  EQS.forEach((e,i)=>sel.append(new Option(e?term(e.k)+' = '+term(e.j):'ninguna igualdad (cada término, su clase)',i)));
+  sel.value=2;
+  let Pset=new Set([0]);
+  function draw(){
+    const eq=EQS[+sel.value]; const N=eq?eq.k:6; const cl=classes(eq,11);
+    const reps=[...cl.keys()].slice(0,N);
+    Pset=new Set([...Pset].filter(r=>reps.includes(r)));
+    const pc=$('ex-p'); pc.innerHTML='<span class="lbl">P contiene</span>';
+    reps.forEach(r=>{ const b=el('button','chip','['+term(r)+']'); b.id='ex-P'+r; b.setAttribute('aria-pressed',Pset.has(r));
+      b.addEventListener('click',()=>{ Pset.has(r)?Pset.delete(r):Pset.add(r); draw(); }); pc.append(b); });
+    const out=$('ex-out'); out.innerHTML='';
+    reps.forEach(r=>{
+      const row=el('div','cls'+(Pset.has(r)?' inP':''));
+      row.append(el('span','name','['+term(r)+']'));
+      cl.get(r).forEach(n=>row.append(el('span','term',term(n))));
+      if(eq&&r>=eq.j) row.append(el('span','term','…'));
+      row.append(el('span','arrow','s lleva a ['+term(classOf(r+1,eq))+']'+(Pset.has(r)?' · en P':'')));
+      out.append(row);
+    });
+    if(!eq) out.append(el('p','small','… y así sin fin: cada término forma su propia clase. Se muestran las seis primeras.'));
+    const hit=new Set(reps.map(r=>classOf(r+1,eq)));
+    const noPred=reps.filter(r=>!hit.has(r)).map(r=>'['+term(r)+']');
+    $('ex-sum').innerHTML=(eq?'<strong>'+N+' clases.</strong> ':'<strong>Infinitas clases</strong>: una copia de ℕ con el sucesor. ')+
+      'Sin predecesora por s: '+(noPred.length?noPred.join(', '):'ninguna')+'. Γ* contiene P τ justo para los términos τ de las clases marcadas, porque con (SI) la propiedad pasa a todos los términos iguales.';
+  }
+  sel.addEventListener('change',draw); draw();
+})();
+buildQuiz($('quiz9'),[
+ {given:'Γ* contiene sss0 = 0',q:'¿Cuántas clases de términos sin variables tiene el cociente?',o:['2','3','Infinitas'],a:1,
+  why:'[0], [s0] y [ss0]: sss0 vuelve a [0]. Es ℤ₃ con «sumar uno». Compruébalo en el explorador.'},
+ {given:'Γ* contiene ssss0 = ss0',q:'¿Cuántas clases hay y cuál no es imagen por s de ninguna?',o:['4 clases; [0] no tiene predecesora.','2 clases; ninguna sin predecesora.','4 clases; [ss0] no tiene predecesora.'],a:0,
+  why:'Las clases son [0], [s0], [ss0] y [sss0], y s lleva [sss0] de vuelta a [ss0]. Nadie va a [0], y a [ss0] llegan dos: [s0] y [sss0]. Un «rho» en lugar de un círculo.'},
+ {given:'Γ* contiene ss0 = 0 y P0',q:'¿Contiene Γ* la fórmula Pssss0?',o:['Sí','No','No se puede saber'],a:0,
+  why:'De ss0 = 0 sale ssss0 = ss0 = 0 con (SI), y de P0 sale Pssss0. Como Γ* contiene todo lo que deduce (III.2.5.i), Pssss0 ∈ Γ*. Por eso P se puede definir sobre las clases.'},
+ {given:'Γ* contiene sss0 = 0. Toma el sistema de términos 𝔅, sin hacer el cociente.',q:'¿Satisface 𝔅 la fórmula sss0 = 0?',o:['Sí','No'],a:1,
+  why:'En 𝔅 los individuos son los propios términos, y sss0 y 0 son términos distintos. Sin el cociente, el modelo de términos no satisface las igualdades de Γ*: el cociente no es un tecnicismo.'},
+ {given:'Γ* contiene Psⁿ0 si y solo si n es par, y no identifica términos sin variables distintos.',q:'¿Qué sistema conocido forman los términos sin variables?',o:['Una copia de ⟨ℕ, 0, sucesor, pares⟩.','Los enteros módulo 2.','Un sistema finito.'],a:0,
+  why:'Cada término es su propia clase, s escribe una s delante (el sucesor) y P marca los pares. (El cociente sigue haciendo falta en general: el Γ* de Lindenbaum usa variables como testigos y contiene igualdades como z = 0.)'},
+ {q:'¿Por qué el modelo que da el lema de Henkin es numerable?',o:['Porque sus individuos son clases de términos, y TER(L) es numerable.','Porque Γ* es finito.','Porque toda teoría tiene modelos finitos.'],a:0,
+  why:'Hay como mucho tantas clases como términos, y con L numerable hay una cantidad numerable de términos. De aquí saldrá el teorema de Löwenheim-Skolem.'}
+],'q9');
+
+
+/* ---------- Enunciados al pulsar las referencias ---------- */
+(function(){
+  const body=$('gl-body');
+  GROUPS.forEach((g,gi)=>{
+    const box=el('div','gl-group'); box.append(el('h3',null,g));
+    Object.entries(GLOSS).filter(([k,v])=>v.g===gi).forEach(([k,v])=>{ const it=el('div','gl-item stmt'); it.id='gl-'+k.replace(/\./g,'-'); it.append(el('b',null,v.t), el('div',null,v.s)); box.append(it); });
+    body.append(box);
+  });
+  const SKIP='button,select,option,a,script,style,#glossary,#pop,.m-noref';
+  function linkify(root){
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{
+      const p=n.parentElement; if(!p||p.closest(SKIP)) return NodeFilter.FILTER_REJECT;
+      REF_RE.lastIndex=0; return REF_RE.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT; }});
+    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n=>{
+      const txt=n.nodeValue; const frag=document.createDocumentFragment(); let last=0; let mt; REF_RE.lastIndex=0;
+      while((mt=REF_RE.exec(txt))){
+        const k=refKey(mt); if(!k||!GLOSS[k]) continue;
+        frag.append(txt.slice(last,mt.index));
+        const b=document.createElement('button'); b.className='ref'; b.dataset.k=k; b.textContent=mt[0];
+        b.setAttribute('aria-expanded','false'); b.setAttribute('aria-controls','pop'); b.title='Ver el enunciado';
+        frag.append(b); last=mt.index+mt[0].length;
+      }
+      if(last===0) return;
+      frag.append(txt.slice(last)); n.replaceWith(frag);
+    });
+  }
+  const pop=$('pop'); let openBtn=null;
+  function close(){ pop.classList.remove('show'); if(openBtn){ openBtn.setAttribute('aria-expanded','false'); openBtn=null; } }
+  function open(b){
+    const g=GLOSS[b.dataset.k]; if(!g) return;
+    if(openBtn===b){ close(); return; }
+    if(openBtn) openBtn.setAttribute('aria-expanded','false');
+    $('pop-t').textContent=g.t; $('pop-b').innerHTML=g.s;
+    pop.classList.add('show'); openBtn=b; b.setAttribute('aria-expanded','true');
+    const r=b.getBoundingClientRect(); const w=pop.offsetWidth;
+    const left=Math.max(8,Math.min(window.scrollX+r.left,window.scrollX+document.documentElement.clientWidth-w-8));
+    pop.style.left=left+'px'; pop.style.top=(window.scrollY+r.bottom+6)+'px';
+    $('pop-x').focus({preventScroll:true});
+  }
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('button.ref'); if(b){ e.preventDefault(); open(b); return; }
+    if(!e.target.closest('#pop')) close();
+  });
+  $('pop-x').addEventListener('click',()=>{ const b=openBtn; close(); if(b) b.focus(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&openBtn){ const b=openBtn; close(); b.focus(); } });
+  window.addEventListener('resize',close);
+  const main=document.querySelector('main');
+  linkify(main);
+  /* Las explicaciones aparecen al responder: también se enlazan */
+  new MutationObserver(ms=>ms.forEach(mu=>mu.addedNodes.forEach(nd=>{
+    if(nd.nodeType===1&&!nd.closest('button.ref')) linkify(nd);
+    else if(nd.nodeType===3&&nd.parentElement&&!nd.parentElement.closest('button.ref')) linkify(nd.parentElement);
+  }))).observe(main,{childList:true,subtree:true});
+})();
+refresh();
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 
 © 2026 Manuel Crescencio Moreno Gómez.
 
-Las aplicaciones de este repositorio (`index.html`, `secuentes.html`, `coincidencia-sustitucion.html` y `correccion.html`) se publican con licencia **Creative Commons Atribución-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)**.
+Las aplicaciones de este repositorio (`index.html`, `secuentes.html`, `coincidencia-sustitucion.html`, `correccion.html` y `completud.html`) se publican con licencia **Creative Commons Atribución-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)**.
 
 Puedes copiarlas, redistribuirlas y adaptarlas para cualquier fin, siempre que:
 

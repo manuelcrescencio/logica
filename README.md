@@ -9,6 +9,7 @@ Aplicaciones web para la asignatura de Lógica (2.º del grado en Matemáticas y
 | `secuentes.html` | Taller de secuentes: deducciones comprobadas línea a línea (cap. III) |
 | `coincidencia-sustitucion.html` | Teoremas de coincidencia y sustitución (II.4.1 y II.4.2) |
 | `correccion.html` | Práctica del teorema de corrección (III.3) |
+| `completud.html` | Práctica de completud: consistencia máxima, ejemplificación, Henkin y Gödel (III.2 y III.4.1–4.3) |
 
 Cada página es un único archivo HTML, sin servidor ni dependencias externas. Las tipografías están en `fuentes/`. Para usarlas sin conexión, basta con descargar el repositorio y abrir `index.html`.
 
